@@ -1,2 +1,4 @@
 Django>=6.0,<6.1
 apify-client>=1.8
+gunicorn
+whitenoise
