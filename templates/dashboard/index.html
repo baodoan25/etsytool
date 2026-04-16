@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>POD of VH Media - Research Tag and Title</title>
+    <script>
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        canvas: "#fff8f1",
+                        panel: "#ffffff",
+                        ink: "#2f1d10",
+                        muted: "#8e6d55",
+                        border: "#efdac7",
+                        accent: "#f58220",
+                        accentSoft: "#fff0e3",
+                        sunrise: "#d86508",
+                        sunriseSoft: "#fff5eb",
+                        success: "#0f9f6e",
+                        successSoft: "#ddf9ef",
+                        danger: "#d44e4e",
+                        dangerSoft: "#fde9e9",
+                        sidebar: "#fff1e6",
+                    },
+                    boxShadow: {
+                        panel: "0 18px 50px rgba(162, 97, 34, 0.09)",
+                        float: "0 12px 32px rgba(162, 97, 34, 0.12)",
+                        glow: "0 0 0 1px rgba(245, 130, 32, 0.26), 0 14px 28px rgba(245, 130, 32, 0.18)",
+                    },
+                    fontFamily: {
+                        sans: ["Aptos", "\"Segoe UI Variable Text\"", "\"Segoe UI\"", "sans-serif"],
+                        display: ["Bahnschrift", "\"Aptos Display\"", "\"Segoe UI Variable Display\"", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link rel="stylesheet" href="{% static 'dashboard/styles.css' %}">
+    <script type="importmap">
+        {
+            "imports": {
+                "react": "https://esm.sh/react@18.3.1",
+                "react-dom/client": "https://esm.sh/react-dom@18.3.1/client?external=react",
+                "htm": "https://esm.sh/htm",
+                "lucide-react": "https://esm.sh/lucide-react?external=react",
+                "recharts": "https://esm.sh/recharts?external=react"
+            }
+        }
+    </script>
+    <script type="module" src="{% static 'dashboard/main.js' %}"></script>
+</head>
+<body class="min-h-screen bg-canvas text-ink antialiased">
+    <div id="root" class="min-h-screen"></div>
+</body>
+</html>
