@@ -52,22 +52,10 @@ function TrendValue({ value }) {
 }
 
 function MetricNumber({ item, field }) {
-    if (item.isAiSuggestion) {
-        return html`<span className="text-sm font-semibold text-muted">AI idea</span>`;
-    }
-
     return formatNumber(item[field]);
 }
 
 function RatioBadges({ item }) {
-    if (item.isAiSuggestion) {
-        return html`
-            <div className="mt-2 flex flex-wrap gap-2">
-                <span className="rounded-full bg-accentSoft px-3 py-1 text-sm text-accent">Needs live metrics</span>
-            </div>
-        `;
-    }
-
     return html`
         <div className="mt-2 flex flex-wrap gap-2">
             <span className="rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700">
@@ -108,7 +96,9 @@ function KeywordDetailModal({ item, onClose }) {
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sunrise">Keyword Detail</p>
                 <h2 className="mt-2 font-display text-3xl text-ink">${item.keyword}</h2>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-                    Snapshot of sales velocity, listing competition, score, and physical versus digital demand for this Etsy tag.
+                    ${item.metricsAreEstimated
+                        ? "Estimated keyword opportunity based on Gemini intent expansion. Connect live Etsy metrics to replace these estimates."
+                        : "Snapshot of sales velocity, listing competition, score, and physical versus digital demand for this Etsy tag."}
                 </p>
 
                 <div className="mt-6 grid grid-cols-4 gap-3">
@@ -145,16 +135,16 @@ function KeywordRow({ item, onDetail }) {
             <td className="px-6 py-8 align-middle">
                 <p className="text-lg font-semibold tracking-tight text-ink">${item.keyword}</p>
                 ${item.isAiSuggestion ? html`
-                    <p className="mt-1 text-xs uppercase tracking-[0.14em] text-accent">Gemini expanded keyword</p>
+                    <p className="mt-1 text-xs uppercase tracking-[0.14em] text-accent">Gemini estimate</p>
                 ` : null}
             </td>
             <td className="px-6 py-8 align-middle">
                 <div className="text-lg font-semibold text-ink">
                     <${MetricNumber} item=${item} field="sales" />
-                    ${item.isAiSuggestion ? null : html`<${TrendValue} value=${item.growthPercent} />`}
+                    <${TrendValue} value=${item.growthPercent} />
                 </div>
                 <p className="mt-1 text-sm text-muted">
-                    ${item.isAiSuggestion ? "Sales metrics are not available for AI-only suggestions." : `Previous period: ${formatNumber(item.previousSales)} sales`}
+                    ${item.metricsAreEstimated ? "Estimated previous period" : "Previous period"}: ${formatNumber(item.previousSales)} sales
                 </p>
             </td>
             <td className="px-6 py-8 align-middle">
@@ -163,12 +153,12 @@ function KeywordRow({ item, onDetail }) {
             <td className="px-6 py-8 align-middle">
                 <div className="text-lg font-semibold text-ink">
                     <${MetricNumber} item=${item} field="newListings" />
-                    ${item.isAiSuggestion ? null : html`<${TrendValue} value=${item.newListingsGrowthPercent} />`}
+                    <${TrendValue} value=${item.newListingsGrowthPercent} />
                 </div>
             </td>
             <td className="px-6 py-8 align-middle">
                 <div className="text-lg font-semibold text-ink">
-                    ${item.isAiSuggestion ? "Pending" : formatCompactNumber(item.totalListings)}
+                    ${formatCompactNumber(item.totalListings)}
                 </div>
                 <${RatioBadges} item=${item} />
             </td>
