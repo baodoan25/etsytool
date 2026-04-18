@@ -3,6 +3,7 @@ from django.views.decorators.http import require_GET
 import re
 from urllib.parse import quote
 
+from .ai_engine.keyword_intent import expand_keyword_query
 from .dev_keyword_data import get_keyword_insights
 from .dev_shop_data import get_listing_fixtures
 from .data_engine.storage import load_normalized_listings
@@ -82,6 +83,15 @@ def _matches_search_text(query, candidates):
         or bool(SEARCH_ALIASES.get(token, set()) & expanded_candidate_tokens)
         for token in tokens_to_match
     )
+
+
+def _matches_any_search_text(queries, candidates):
+    cleaned_queries = [str(query or "").strip() for query in queries if str(query or "").strip()]
+
+    if not cleaned_queries:
+        return True
+
+    return any(_matches_search_text(query, candidates) for query in cleaned_queries)
 
 
 def _listing_sales_value(listing, timeframe):
@@ -307,13 +317,21 @@ def keyword_insights_view(request):
     sort_by = request.GET.get("sortBy", "sales")
     timeframe = request.GET.get("timeframe", "1")
     items = get_keyword_insights()
+    intent = expand_keyword_query(query) if query else {
+        "originalQuery": "",
+        "intent": "",
+        "expandedKeywords": [],
+        "productAngles": [],
+        "holidayFits": [],
+        "source": "none",
+    }
 
     if query:
         items = [
             item
             for item in items
-            if _matches_search_text(
-                query,
+            if _matches_any_search_text(
+                intent.get("expandedKeywords", [query]),
                 [
                     item.get("keyword", ""),
                     *item.get("intentTags", []),
@@ -339,6 +357,7 @@ def keyword_insights_view(request):
                 "timeframe": timeframe,
                 "count": len(items),
                 "market": "USA",
+                "intent": intent,
             },
         }
     )

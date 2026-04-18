@@ -17,6 +17,25 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def _load_local_env_file():
+    env_path = BASE_DIR / '.env'
+
+    if not env_path.exists():
+        return
+
+    for line in env_path.read_text(encoding='utf-8').splitlines():
+        stripped = line.strip()
+
+        if not stripped or stripped.startswith('#') or '=' not in stripped:
+            continue
+
+        key, value = stripped.split('=', 1)
+        os.environ.setdefault(key.strip(), value.strip())
+
+
+_load_local_env_file()
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
@@ -124,3 +143,8 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 APIFY_API_TOKEN = os.environ.get('APIFY_API_TOKEN', '')
 APIFY_ETSY_ACTOR_ID = os.environ.get('APIFY_ETSY_ACTOR_ID', 'MiEVd9O3R4Td5AbV9')
 DATA_ENGINE_DIR = Path(os.environ.get('ETSYTOOL_DATA_ENGINE_DIR', BASE_DIR / 'data'))
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+GEMINI_MODEL = os.environ.get('GEMINI_MODEL', 'gemini-2.5-flash')
+GEMINI_INTENT_ENABLED = os.environ.get('GEMINI_INTENT_ENABLED', 'false').lower() == 'true'
+GEMINI_TIMEOUT_SECONDS = int(os.environ.get('GEMINI_TIMEOUT_SECONDS', '20'))
+GEMINI_INTENT_CACHE_TTL_SECONDS = int(os.environ.get('GEMINI_INTENT_CACHE_TTL_SECONDS', '604800'))

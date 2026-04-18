@@ -124,8 +124,11 @@ export async function fetchKeywordInsights(filters, signal) {
     const payload = await requestJson(url, { signal });
 
     if (Array.isArray(payload)) {
-        return payload;
+        return { items: payload, meta: {} };
     }
 
-    return payload.items || payload.results || payload.data || [];
+    return {
+        items: payload.items || payload.results || payload.data || [],
+        meta: payload.meta || {},
+    };
 }

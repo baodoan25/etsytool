@@ -168,11 +168,15 @@ export function KeywordInsightsResearchPage({ initialQuery = "" }) {
     const [sortBy, setSortBy] = useState("score");
     const [selectedKeyword, setSelectedKeyword] = useState(null);
     const deferredQuery = useDeferredValue(query);
-    const { items, isLoading, error, refetch } = useKeywordInsights({
+    const { items, meta, isLoading, error, refetch } = useKeywordInsights({
         query: deferredQuery,
         timeframe,
         sortBy,
     });
+    const intent = meta?.intent || {};
+    const expandedKeywords = Array.isArray(intent.expandedKeywords)
+        ? intent.expandedKeywords.filter((keyword) => keyword && keyword !== intent.originalQuery).slice(0, 6)
+        : [];
 
     useEffect(() => {
         if (initialQuery) {
@@ -237,6 +241,23 @@ export function KeywordInsightsResearchPage({ initialQuery = "" }) {
                         Search
                     </button>
                 </div>
+                ${deferredQuery && expandedKeywords.length ? html`
+                    <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-muted">
+                        <span className="font-semibold uppercase tracking-[0.14em] text-sunrise">
+                            ${intent.source === "gemini" ? "AI expanded" : "Intent expanded"}
+                        </span>
+                        ${expandedKeywords.map((keyword) => html`
+                            <button
+                                key=${keyword}
+                                type="button"
+                                onClick=${() => setQuery(keyword)}
+                                className="rounded-full border border-border bg-white px-3 py-1 font-medium text-ink transition hover:border-accent hover:text-accent"
+                            >
+                                ${keyword}
+                            </button>
+                        `)}
+                    </div>
+                ` : null}
             </section>
 
             ${isLoading ? html`
