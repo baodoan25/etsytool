@@ -50,6 +50,8 @@ function layGoiYTimKiem(searchMode) {
 }
 
 function ChonBoLoc({ label, value, onChange, options }) {
+    const cacLuaChon = Array.isArray(options) ? options : [];
+
     return html`
         <label className="min-w-[168px]">
             <span className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">${label}</span>
@@ -58,7 +60,7 @@ function ChonBoLoc({ label, value, onChange, options }) {
                 onChange=${onChange}
                 className="filter-select h-11 w-full rounded-2xl border border-border bg-white/90 px-4 pr-8 text-sm font-medium text-ink shadow-sm transition focus:border-accent focus:ring-0"
             >
-                ${options.map((option) => html`
+                ${cacLuaChon.map((option) => html`
                     <option key=${option.value} value=${option.value}>${option.label}</option>
                 `)}
             </select>
@@ -82,6 +84,7 @@ function TruongNgay({ value, onChange }) {
 
 export function DauTrang({
     cacDanhMuc,
+    categories,
     filters,
     onFilterChange,
     resultCount,
@@ -90,6 +93,12 @@ export function DauTrang({
     maxFavorites,
     isLoading,
 }) {
+    const cacLuaChonDanhMuc = Array.isArray(cacDanhMuc)
+        ? cacDanhMuc
+        : Array.isArray(categories)
+            ? categories
+            : [];
+
     return html`
         <header className="surface-panel mb-5 rounded-[30px] p-5">
             <div className="mb-5 flex items-start justify-between gap-5">
@@ -172,7 +181,7 @@ export function DauTrang({
                             label="Category"
                             value=${filters.category}
                             onChange=${(event) => onFilterChange("category", event.target.value)}
-                            options=${cacDanhMuc}
+                            options=${cacLuaChonDanhMuc}
                         />
                         <${ChonBoLoc}
                             label="Created Time"
