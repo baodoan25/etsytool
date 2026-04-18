@@ -1,24 +1,24 @@
 import { useDeferredValue, useEffect, useState } from "react";
 import { Search, TrendingUp, X } from "lucide-react";
-import { useKeywordInsights } from "../hooks/useKeywordInsights.js";
-import { formatCompactNumber, formatNumber } from "../utils/formatters.js";
+import { dungThongTinTuKhoa } from "../hooks/useKeywordInsights.js";
+import { dinhDangSoGon, dinhDangSo } from "../utils/formatters.js";
 import { html } from "../utils/html.js";
-import { FallbackState } from "./FallbackState.js";
+import { TrangThaiDuPhong } from "./FallbackState.js";
 
-const timeframeOptions = [
+const cacLuaChonKhoangThoiGian = [
     { value: "1", label: "1 Day" },
     { value: "3", label: "3 Days" },
     { value: "7", label: "7 Days" },
 ];
 
-const sortOptions = [
+const cacLuaChonSapXep = [
     { value: "score", label: "Score" },
     { value: "sales", label: "Sales" },
     { value: "new-listings", label: "New Listings" },
     { value: "total-listings", label: "Total Listings" },
 ];
 
-function KeywordSkeleton() {
+function KhungTaiTuKhoa() {
     return html`
         <div className="overflow-hidden rounded-[10px] border border-border bg-white shadow-panel">
             ${Array.from({ length: 6 }, (_, index) => html`
@@ -41,34 +41,34 @@ function KeywordSkeleton() {
     `;
 }
 
-function TrendValue({ value }) {
-    const isPositive = Number(value) >= 0;
+function GiaTriXuHuong({ value }) {
+    const laSoDuong = Number(value) >= 0;
 
     return html`
-        <span className=${`ml-2 text-sm font-medium ${isPositive ? "text-success" : "text-danger"}`}>
-            ${isPositive ? "↑" : "↓"} ${formatNumber(Math.abs(value))}%
+        <span className=${`ml-2 text-sm font-medium ${laSoDuong ? "text-success" : "text-danger"}`}>
+            ${laSoDuong ? "↑" : "↓"} ${dinhDangSo(Math.abs(value))}%
         </span>
     `;
 }
 
-function MetricNumber({ item, field }) {
-    return formatNumber(item[field]);
+function SoChiSo({ item, field }) {
+    return dinhDangSo(item[field]);
 }
 
-function RatioBadges({ item }) {
+function CacNhanTiLe({ item }) {
     return html`
         <div className="mt-2 flex flex-wrap gap-2">
             <span className="rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700">
-                Physical ${formatNumber(item.physicalPercent)}%
+                Physical ${dinhDangSo(item.physicalPercent)}%
             </span>
             <span className="rounded-full bg-sunriseSoft px-3 py-1 text-sm text-sunrise">
-                Digital ${formatNumber(item.digitalPercent)}%
+                Digital ${dinhDangSo(item.digitalPercent)}%
             </span>
         </div>
     `;
 }
 
-function KeywordDetailModal({ item, onClose }) {
+function HopThoaiChiTietTuKhoa({ item, onClose }) {
     if (!item) {
         return null;
     }
@@ -104,32 +104,32 @@ function KeywordDetailModal({ item, onClose }) {
                 <div className="mt-6 grid grid-cols-4 gap-3">
                     <div className="rounded-2xl border border-border bg-white px-4 py-3">
                         <p className="stat-label text-[10px] text-muted">Sales</p>
-                        <p className="mt-2 font-display text-2xl text-ink">${formatNumber(item.sales)}</p>
+                        <p className="mt-2 font-display text-2xl text-ink">${dinhDangSo(item.sales)}</p>
                     </div>
                     <div className="rounded-2xl border border-border bg-white px-4 py-3">
                         <p className="stat-label text-[10px] text-muted">Score</p>
-                        <p className="mt-2 font-display text-2xl text-sunrise">${formatNumber(item.score)}</p>
+                        <p className="mt-2 font-display text-2xl text-sunrise">${dinhDangSo(item.score)}</p>
                     </div>
                     <div className="rounded-2xl border border-border bg-white px-4 py-3">
                         <p className="stat-label text-[10px] text-muted">New Listings</p>
-                        <p className="mt-2 font-display text-2xl text-ink">${formatNumber(item.newListings)}</p>
+                        <p className="mt-2 font-display text-2xl text-ink">${dinhDangSo(item.newListings)}</p>
                     </div>
                     <div className="rounded-2xl border border-border bg-white px-4 py-3">
                         <p className="stat-label text-[10px] text-muted">Total Listings</p>
-                        <p className="mt-2 font-display text-2xl text-ink">${formatCompactNumber(item.totalListings)}</p>
+                        <p className="mt-2 font-display text-2xl text-ink">${dinhDangSoGon(item.totalListings)}</p>
                     </div>
                 </div>
 
                 <div className="mt-5 rounded-2xl border border-border bg-white px-5 py-4">
                     <p className="font-semibold text-ink">Demand split</p>
-                    <${RatioBadges} item=${item} />
+                    <${CacNhanTiLe} item=${item} />
                 </div>
             </div>
         </div>
     `;
 }
 
-function KeywordRow({ item, onDetail }) {
+function DongTuKhoa({ item, onDetail }) {
     return html`
         <tr className="border-b border-white bg-[#f1f1f1] last:border-b-0">
             <td className="px-6 py-8 align-middle">
@@ -140,27 +140,27 @@ function KeywordRow({ item, onDetail }) {
             </td>
             <td className="px-6 py-8 align-middle">
                 <div className="text-lg font-semibold text-ink">
-                    <${MetricNumber} item=${item} field="sales" />
-                    <${TrendValue} value=${item.growthPercent} />
+                    <${SoChiSo} item=${item} field="sales" />
+                    <${GiaTriXuHuong} value=${item.growthPercent} />
                 </div>
                 <p className="mt-1 text-sm text-muted">
-                    ${item.metricsAreEstimated ? "Estimated previous period" : "Previous period"}: ${formatNumber(item.previousSales)} sales
+                    ${item.metricsAreEstimated ? "Estimated previous period" : "Previous period"}: ${dinhDangSo(item.previousSales)} sales
                 </p>
             </td>
             <td className="px-6 py-8 align-middle">
-                <span className="font-display text-xl text-sunrise">${formatNumber(item.score)}</span>
+                <span className="font-display text-xl text-sunrise">${dinhDangSo(item.score)}</span>
             </td>
             <td className="px-6 py-8 align-middle">
                 <div className="text-lg font-semibold text-ink">
-                    <${MetricNumber} item=${item} field="newListings" />
-                    <${TrendValue} value=${item.newListingsGrowthPercent} />
+                    <${SoChiSo} item=${item} field="newListings" />
+                    <${GiaTriXuHuong} value=${item.newListingsGrowthPercent} />
                 </div>
             </td>
             <td className="px-6 py-8 align-middle">
                 <div className="text-lg font-semibold text-ink">
-                    ${formatCompactNumber(item.totalListings)}
+                    ${dinhDangSoGon(item.totalListings)}
                 </div>
-                <${RatioBadges} item=${item} />
+                <${CacNhanTiLe} item=${item} />
             </td>
             <td className="px-6 py-8 align-middle">
                 <button
@@ -175,19 +175,19 @@ function KeywordRow({ item, onDetail }) {
     `;
 }
 
-export function KeywordInsightsResearchPage({ initialQuery = "" }) {
+export function TrangNghienCuuThongTinTuKhoa({ initialQuery = "" }) {
     const [query, setQuery] = useState("");
     const [timeframe, setTimeframe] = useState("1");
     const [sortBy, setSortBy] = useState("score");
     const [selectedKeyword, setSelectedKeyword] = useState(null);
-    const deferredQuery = useDeferredValue(query);
-    const { items, meta, isLoading, error, refetch } = useKeywordInsights({
-        query: deferredQuery,
+    const truyVanTriHoan = useDeferredValue(query);
+    const { items, meta, isLoading, error, refetch } = dungThongTinTuKhoa({
+        query: truyVanTriHoan,
         timeframe,
         sortBy,
     });
     const intent = meta?.intent || {};
-    const expandedKeywords = Array.isArray(intent.expandedKeywords)
+    const cacTuKhoaMoRong = Array.isArray(intent.expandedKeywords)
         ? intent.expandedKeywords.filter((keyword) => keyword && keyword !== intent.originalQuery).slice(0, 12)
         : [];
 
@@ -232,7 +232,7 @@ export function KeywordInsightsResearchPage({ initialQuery = "" }) {
                         onChange=${(event) => setTimeframe(event.target.value)}
                         className="filter-select h-12 w-[180px] rounded-lg border border-border bg-white px-4 pr-8 text-sm font-medium text-ink focus:border-accent focus:ring-0"
                     >
-                        ${timeframeOptions.map((option) => html`<option key=${option.value} value=${option.value}>${option.label}</option>`)}
+                        ${cacLuaChonKhoangThoiGian.map((option) => html`<option key=${option.value} value=${option.value}>${option.label}</option>`)}
                     </select>
 
                     <div className="relative">
@@ -242,7 +242,7 @@ export function KeywordInsightsResearchPage({ initialQuery = "" }) {
                             onChange=${(event) => setSortBy(event.target.value)}
                             className="filter-select h-12 w-[190px] rounded-lg border border-border bg-white px-4 pr-8 text-sm font-medium text-ink focus:border-accent focus:ring-0"
                         >
-                            ${sortOptions.map((option) => html`<option key=${option.value} value=${option.value}>${option.label}</option>`)}
+                            ${cacLuaChonSapXep.map((option) => html`<option key=${option.value} value=${option.value}>${option.label}</option>`)}
                         </select>
                     </div>
 
@@ -254,12 +254,12 @@ export function KeywordInsightsResearchPage({ initialQuery = "" }) {
                         Search
                     </button>
                 </div>
-                ${deferredQuery && expandedKeywords.length ? html`
+                ${truyVanTriHoan && cacTuKhoaMoRong.length ? html`
                     <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-muted">
                         <span className="font-semibold uppercase tracking-[0.14em] text-sunrise">
                             ${intent.source === "gemini" ? "AI expanded" : "Intent expanded"}
                         </span>
-                        ${expandedKeywords.map((keyword) => html`
+                        ${cacTuKhoaMoRong.map((keyword) => html`
                             <button
                                 key=${keyword}
                                 type="button"
@@ -274,9 +274,9 @@ export function KeywordInsightsResearchPage({ initialQuery = "" }) {
             </section>
 
             ${isLoading ? html`
-                <${KeywordSkeleton} />
+                <${KhungTaiTuKhoa} />
             ` : error ? html`
-                <${FallbackState}
+                <${TrangThaiDuPhong}
                     tone="error"
                     title="Keyword insights API returned an error"
                     description=${error}
@@ -288,7 +288,7 @@ export function KeywordInsightsResearchPage({ initialQuery = "" }) {
                     <div className="flex items-center justify-between border-b border-border px-6 py-4">
                         <div className="flex items-center gap-2 text-sm font-semibold text-muted">
                             <${TrendingUp} className="h-4 w-4 text-accent" />
-                            Ranked by ${sortOptions.find((option) => option.value === sortBy)?.label || "Score"}
+                            Ranked by ${cacLuaChonSapXep.find((option) => option.value === sortBy)?.label || "Score"}
                         </div>
                         <span className="rounded-full bg-accentSoft px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-accent">
                             Tag metrics
@@ -307,13 +307,13 @@ export function KeywordInsightsResearchPage({ initialQuery = "" }) {
                         </thead>
                         <tbody>
                             ${items.map((item) => html`
-                                <${KeywordRow} key=${item.keyword} item=${item} onDetail=${setSelectedKeyword} />
+                                <${DongTuKhoa} key=${item.keyword} item=${item} onDetail=${setSelectedKeyword} />
                             `)}
                         </tbody>
                     </table>
                 </section>
             ` : html`
-                <${FallbackState}
+                <${TrangThaiDuPhong}
                     tone="empty"
                     title="No keyword tags found"
                     description="Try a broader keyword or switch timeframe to reload tag opportunities."
@@ -322,7 +322,7 @@ export function KeywordInsightsResearchPage({ initialQuery = "" }) {
                 />
             `}
 
-            <${KeywordDetailModal} item=${selectedKeyword} onClose=${() => setSelectedKeyword(null)} />
+            <${HopThoaiChiTietTuKhoa} item=${selectedKeyword} onClose=${() => setSelectedKeyword(null)} />
         </main>
     `;
 }

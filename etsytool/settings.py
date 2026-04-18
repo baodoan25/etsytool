@@ -10,142 +10,144 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
-from pathlib import Path
-import os
+from pathlib import Path 
+import importlib.util
+import os 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR =Path (__file__ ).resolve ().parent .parent 
 
 
-def _load_local_env_file():
-    env_path = BASE_DIR / '.env'
+def _tai_file_moi_truong_cuc_bo ():
+    env_path =BASE_DIR /'.env'
 
-    if not env_path.exists():
-        return
+    if not env_path .exists ():
+        return 
 
-    for line in env_path.read_text(encoding='utf-8').splitlines():
-        stripped = line.strip()
+    for line in env_path .read_text (encoding ='utf-8').splitlines ():
+        stripped =line .strip ()
 
-        if not stripped or stripped.startswith('#') or '=' not in stripped:
-            continue
+        if not stripped or stripped .startswith ('#')or '='not in stripped :
+            continue 
 
-        key, value = stripped.split('=', 1)
-        os.environ.setdefault(key.strip(), value.strip())
+        khoa ,gia_tri =stripped .split ('=',1 )
+        os .environ .setdefault (khoa .strip (),gia_tri .strip ())
 
 
-_load_local_env_file()
+_tai_file_moi_truong_cuc_bo ()
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-vqwji%sd4oi$+e^0+mj%d$wedn3+)8%5$neob%$4l5zxso7y)j'
+SECRET_KEY ='django-insecure-vqwji%sd4oi$+e^0+mj%d$wedn3+)8%5$neob%$4l5zxso7y)j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG =True 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS =['*']
 
 
 # Application definition
 
-INSTALLED_APPS = [
-    'etsytool',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+INSTALLED_APPS =[
+'etsytool',
+'django.contrib.admin',
+'django.contrib.auth',
+'django.contrib.contenttypes',
+'django.contrib.sessions',
+'django.contrib.messages',
+'django.contrib.staticfiles',
 ]
 
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+CO_WHITENOISE = importlib.util.find_spec('whitenoise') is not None
+
+MIDDLEWARE =[
+'django.middleware.security.SecurityMiddleware',
+*(["whitenoise.middleware.WhiteNoiseMiddleware"] if CO_WHITENOISE else []),
+'django.contrib.sessions.middleware.SessionMiddleware',
+'django.middleware.common.CommonMiddleware',
+'django.middleware.csrf.CsrfViewMiddleware',
+'django.contrib.auth.middleware.AuthenticationMiddleware',
+'django.contrib.messages.middleware.MessageMiddleware',
+'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'etsytool.urls'
+ROOT_URLCONF ='etsytool.urls'
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
+TEMPLATES =[
+{
+'BACKEND':'django.template.backends.django.DjangoTemplates',
+'DIRS':[BASE_DIR /'templates'],
+'APP_DIRS':True ,
+'OPTIONS':{
+'context_processors':[
+'django.template.context_processors.request',
+'django.contrib.auth.context_processors.auth',
+'django.contrib.messages.context_processors.messages',
+],
+},
+},
 ]
 
-WSGI_APPLICATION = 'etsytool.wsgi.application'
+WSGI_APPLICATION ='etsytool.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+DATABASES ={
+'default':{
+'ENGINE':'django.db.backends.sqlite3',
+'NAME':BASE_DIR /'db.sqlite3',
+}
 }
 
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+AUTH_PASSWORD_VALIDATORS =[
+{
+'NAME':'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+},
+{
+'NAME':'django.contrib.auth.password_validation.MinimumLengthValidator',
+},
+{
+'NAME':'django.contrib.auth.password_validation.CommonPasswordValidator',
+},
+{
+'NAME':'django.contrib.auth.password_validation.NumericPasswordValidator',
+},
 ]
 
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE ='en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE ='UTC'
 
-USE_I18N = True
+USE_I18N =True 
 
-USE_TZ = True
+USE_TZ =True 
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_URL ='static/'
+STATICFILES_DIRS =[BASE_DIR /'static']
 
-APIFY_API_TOKEN = os.environ.get('APIFY_API_TOKEN', '')
-APIFY_ETSY_ACTOR_ID = os.environ.get('APIFY_ETSY_ACTOR_ID', 'MiEVd9O3R4Td5AbV9')
-DATA_ENGINE_DIR = Path(os.environ.get('ETSYTOOL_DATA_ENGINE_DIR', BASE_DIR / 'data'))
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
-GEMINI_MODEL = os.environ.get('GEMINI_MODEL', 'gemini-2.5-flash')
-GEMINI_INTENT_ENABLED = os.environ.get('GEMINI_INTENT_ENABLED', 'false').lower() == 'true'
-GEMINI_TIMEOUT_SECONDS = int(os.environ.get('GEMINI_TIMEOUT_SECONDS', '20'))
-GEMINI_INTENT_CACHE_TTL_SECONDS = int(os.environ.get('GEMINI_INTENT_CACHE_TTL_SECONDS', '604800'))
-GEMINI_MAX_EXPANDED_KEYWORDS = int(os.environ.get('GEMINI_MAX_EXPANDED_KEYWORDS', '32'))
+APIFY_API_TOKEN =os .environ .get ('APIFY_API_TOKEN','')
+APIFY_ETSY_ACTOR_ID =os .environ .get ('APIFY_ETSY_ACTOR_ID','MiEVd9O3R4Td5AbV9')
+DATA_ENGINE_DIR =Path (os .environ .get ('ETSYTOOL_DATA_ENGINE_DIR',BASE_DIR /'data'))
+GEMINI_API_KEY =os .environ .get ('GEMINI_API_KEY','')
+GEMINI_MODEL =os .environ .get ('GEMINI_MODEL','gemini-2.5-flash')
+GEMINI_INTENT_ENABLED =os .environ .get ('GEMINI_INTENT_ENABLED','false').lower ()=='true'
+GEMINI_TIMEOUT_SECONDS =int (os .environ .get ('GEMINI_TIMEOUT_SECONDS','20'))
+GEMINI_INTENT_CACHE_TTL_SECONDS =int (os .environ .get ('GEMINI_INTENT_CACHE_TTL_SECONDS','604800'))
+GEMINI_MAX_EXPANDED_KEYWORDS =int (os .environ .get ('GEMINI_MAX_EXPANDED_KEYWORDS','32'))

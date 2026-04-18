@@ -1,6 +1,6 @@
 import { html } from "../utils/html.js";
 
-function TagPlaceholder({ index }) {
+function ChoGiuChoThe({ index }) {
     return html`
         <div key=${`tag-placeholder-${index}`} className="rounded-[22px] border border-border bg-white px-4 py-3">
             <div className="flex items-center gap-3">
@@ -17,7 +17,7 @@ function TagPlaceholder({ index }) {
     `;
 }
 
-export function ModalSkeleton() {
+export function KhungTaiHopThoai() {
     return html`
         <div className="surface-panel app-scrollbar relative grid h-[calc(100vh-80px)] w-[min(1220px,calc(100vw-120px))] grid-cols-[420px_minmax(0,1fr)] overflow-hidden rounded-[36px]">
             <section className="app-scrollbar overflow-y-auto border-r border-border bg-canvas/65 p-8">
@@ -41,7 +41,7 @@ export function ModalSkeleton() {
                 <div className="skeleton-block h-9 w-48 rounded-xl"></div>
                 <div className="skeleton-block mt-3 h-4 w-[68%] rounded-full"></div>
                 <div className="mt-6 grid grid-cols-2 gap-3">
-                    ${Array.from({ length: 13 }, (_, index) => html`<${TagPlaceholder} index=${index} />`)}
+                    ${Array.from({ length: 13 }, (_, index) => html`<${ChoGiuChoThe} index=${index} />`)}
                 </div>
             </section>
         </div>

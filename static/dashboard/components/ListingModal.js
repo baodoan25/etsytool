@@ -1,26 +1,26 @@
 import { useEffect } from "react";
 import { ArrowUpRight, BarChart3, Eye, Heart, Store, Tags, X } from "lucide-react";
 import {
-    buildListingDisplayTitle,
-    formatCurrency,
-    formatCompactNumber,
-    formatNumber,
-    getTimeframeLabel,
+    taoTieuDeHienThiListing,
+    dinhDangTienTe,
+    dinhDangSoGon,
+    dinhDangSo,
+    layNhanKhoangThoiGian,
 } from "../utils/formatters.js";
 import { html } from "../utils/html.js";
-import { useListingDetails } from "../hooks/useListingDetails.js";
+import { dungChiTietListing } from "../hooks/useListingDetails.js";
 import { resolveSafeExternalUrl, resolveSafeListingUrl } from "../utils/urlResolvers.js";
-import { FallbackState } from "./FallbackState.js";
-import { ModalSkeleton } from "./ModalSkeleton.js";
+import { TrangThaiDuPhong } from "./FallbackState.js";
+import { KhungTaiHopThoai } from "./ModalSkeleton.js";
 
-const metricCards = [
-    { key: "price", label: "Price", icon: Store, formatter: formatCurrency },
-    { key: "estimatedSales", label: "Estimated Sales", icon: BarChart3, formatter: formatNumber },
-    { key: "views", label: "Views", icon: Eye, formatter: formatCompactNumber },
-    { key: "favorites", label: "Favorites", icon: Heart, formatter: formatNumber },
+const cacTheChiSo = [
+    { key: "price", label: "Price", icon: Store, formatter: dinhDangTienTe },
+    { key: "estimatedSales", label: "Estimated Sales", icon: BarChart3, formatter: dinhDangSo },
+    { key: "views", label: "Views", icon: Eye, formatter: dinhDangSoGon },
+    { key: "favorites", label: "Favorites", icon: Heart, formatter: dinhDangSo },
 ];
 
-function TagBadge({ tag, index }) {
+function NhanThe({ tag, index }) {
     return html`
         <div className=${`rounded-[22px] border px-4 py-3 transition ${
             tag.isPlaceholder
@@ -51,8 +51,8 @@ function TagBadge({ tag, index }) {
     `;
 }
 
-export function ListingModal({ listing, timeframe, onClose }) {
-    const { details, isLoading, error, refetch } = useListingDetails(listing);
+export function HopThoaiListing({ listing, timeframe, onClose }) {
+    const { details, isLoading, error, refetch } = dungChiTietListing(listing);
     const shopLink = listing
         ? resolveSafeExternalUrl(listing.shopUrl, listing.shopName, listing.shopUrlVerified)
         : null;
@@ -106,10 +106,10 @@ export function ListingModal({ listing, timeframe, onClose }) {
                 </button>
 
                 ${isLoading ? html`
-                    <${ModalSkeleton} />
+                    <${KhungTaiHopThoai} />
                 ` : error ? html`
                     <div className="w-[min(920px,calc(100vw-120px))]">
-                        <${FallbackState}
+                        <${TrangThaiDuPhong}
                             tone="error"
                             title="Listing detail API is not responding"
                             description=${error}
@@ -132,12 +132,12 @@ export function ListingModal({ listing, timeframe, onClose }) {
                                         Listing Detail
                                     </span>
                                     <span className="rounded-full bg-accentSoft px-3 py-1 text-xs font-semibold text-accent">
-                                        ${getTimeframeLabel(timeframe)}
+                                        ${layNhanKhoangThoiGian(timeframe)}
                                     </span>
                                 </div>
 
                                 <h2 id="listing-modal-title" className="font-display text-[2rem] leading-tight text-ink">
-                                    ${details.title || buildListingDisplayTitle(listing.listingTitle, listing.listingId)}
+                                    ${details.title || taoTieuDeHienThiListing(listing.listingTitle, listing.listingId)}
                                 </h2>
 
                                 <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted">
@@ -160,7 +160,7 @@ export function ListingModal({ listing, timeframe, onClose }) {
                                 </div>
 
                                 <div className="mt-6 grid grid-cols-2 gap-3">
-                                    ${metricCards.map((metric) => {
+                                    ${cacTheChiSo.map((metric) => {
                                         const Icon = metric.icon;
 
                                         return html`
@@ -227,7 +227,7 @@ export function ListingModal({ listing, timeframe, onClose }) {
 
                             <div className="grid grid-cols-2 gap-3">
                                 ${details.tags.map((tag, index) => html`
-                                    <${TagBadge} key=${tag.id} tag=${tag} index=${index} />
+                                    <${NhanThe} key=${tag.id} tag=${tag} index=${index} />
                                 `)}
                             </div>
                         </section>

@@ -1,24 +1,24 @@
 import {
-    normalizeListingDetails,
-    normalizeTopListingsCollection,
+    chuanHoaChiTietListing,
+    chuanHoaTapListingHangDau,
 } from "../utils/normalizers.js";
 
-const DEFAULT_CONFIG = {
+const CAU_HINH_MAC_DINH = {
     baseUrl: window.__POD_RESEARCH_API_BASE_URL__ || "/api/pod-research",
     topListingsPath: "/top-listings",
     listingDetailsPath: (listingId) => `/listings/${encodeURIComponent(listingId)}`,
     keywordInsightsPath: "/keyword-insights",
 };
 
-function getApiConfig() {
+function layCauHinhApi() {
     return {
-        ...DEFAULT_CONFIG,
+        ...CAU_HINH_MAC_DINH,
         ...(window.__POD_RESEARCH_API_CONFIG__ || {}),
     };
 }
 
-function buildUrl(path, queryParams = {}) {
-    const config = getApiConfig();
+function taoUrl(path, queryParams = {}) {
+    const config = layCauHinhApi();
     const normalizedBase = config.baseUrl.endsWith("/")
         ? config.baseUrl.slice(0, -1)
         : config.baseUrl;
@@ -41,7 +41,7 @@ function buildUrl(path, queryParams = {}) {
     return url.toString();
 }
 
-async function parseResponseError(response) {
+async function phanTichLoiPhanHoi(response) {
     try {
         const contentType = response.headers.get("content-type") || "";
 
@@ -65,7 +65,7 @@ async function parseResponseError(response) {
     }
 }
 
-async function requestJson(url, options = {}) {
+async function yeuCauJson(url, options = {}) {
     const response = await fetch(url, {
         ...options,
         headers: {
@@ -75,17 +75,17 @@ async function requestJson(url, options = {}) {
     });
 
     if (!response.ok) {
-        const message = await parseResponseError(response);
+        const message = await phanTichLoiPhanHoi(response);
         throw new Error(message);
     }
 
     return response.json();
 }
 
-export async function fetchTopListings(filters, signal) {
-    const config = getApiConfig();
+export async function taiListingHangDau(filters, signal) {
+    const config = layCauHinhApi();
     const searchQuery = String(filters.searchQuery || "").trim();
-    const url = buildUrl(config.topListingsPath, {
+    const url = taoUrl(config.topListingsPath, {
         date: filters.date,
         category: filters.category,
         timeframe: filters.timeframe,
@@ -98,30 +98,30 @@ export async function fetchTopListings(filters, signal) {
         sortBy: filters.sortBy,
         potentialOnly: filters.potentialOnly,
     });
-    const payload = await requestJson(url, { signal });
+    const payload = await yeuCauJson(url, { signal });
 
-    return normalizeTopListingsCollection(payload);
+    return chuanHoaTapListingHangDau(payload);
 }
 
-export async function fetchListingDetails(listingId, listingSummary, signal) {
-    const config = getApiConfig();
-    const url = buildUrl(config.listingDetailsPath(listingId));
-    const payload = await requestJson(url, { signal });
+export async function taiChiTietListing(listingId, listingSummary, signal) {
+    const config = layCauHinhApi();
+    const url = taoUrl(config.listingDetailsPath(listingId));
+    const payload = await yeuCauJson(url, { signal });
     const detailObject = Array.isArray(payload)
         ? payload[0] || {}
         : payload?.item || payload?.listing || (payload?.data && !Array.isArray(payload.data) ? payload.data : payload);
 
-    return normalizeListingDetails(detailObject, listingSummary);
+    return chuanHoaChiTietListing(detailObject, listingSummary);
 }
 
-export async function fetchKeywordInsights(filters, signal) {
-    const config = getApiConfig();
-    const url = buildUrl(config.keywordInsightsPath, {
+export async function taiThongTinTuKhoa(filters, signal) {
+    const config = layCauHinhApi();
+    const url = taoUrl(config.keywordInsightsPath, {
         query: String(filters.query || "").trim(),
         timeframe: filters.timeframe,
         sortBy: filters.sortBy,
     });
-    const payload = await requestJson(url, { signal });
+    const payload = await yeuCauJson(url, { signal });
 
     if (Array.isArray(payload)) {
         return { items: payload, meta: {} };

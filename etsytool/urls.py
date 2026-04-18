@@ -14,15 +14,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path
-from django.views.generic import TemplateView
-from .api_views import keyword_insights_view, listing_details_view, top_listings_view
+from django .contrib import admin 
+from django .urls import path 
+from django .views .generic import TemplateView 
+from .api_views import xem_thong_tin_tu_khoa ,xem_chi_tiet_listing ,xem_listing_hang_dau 
 
-urlpatterns = [
-    path('', TemplateView.as_view(template_name='dashboard/index.html'), name='dashboard'),
-    path('api/pod-research/top-listings', top_listings_view, name='top-listings-api'),
-    path('api/pod-research/listings/<str:listing_id>', listing_details_view, name='listing-details-api'),
-    path('api/pod-research/keyword-insights', keyword_insights_view, name='keyword-insights-api'),
-    path('admin/', admin.site.urls),
+urlpatterns =[
+path ('',TemplateView .as_view (template_name ='dashboard/index.html'),name ='dashboard'),
+path ('api/pod-research/top-listings',xem_listing_hang_dau ,name ='top-listings-api'),
+path ('api/pod-research/listings/<str:listing_id>',xem_chi_tiet_listing ,name ='listing-details-api'),
+path ('api/pod-research/keyword-insights',xem_thong_tin_tu_khoa ,name ='keyword-insights-api'),
+path ('admin/',admin .site .urls ),
 ]

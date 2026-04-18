@@ -1,25 +1,25 @@
 import { useEffect, useRef, useState } from "react";
-import { fetchKeywordInsights } from "../api/podResearchApi.js";
+import { taiThongTinTuKhoa } from "../api/podResearchApi.js";
 
-export function useKeywordInsights(filters) {
+export function dungThongTinTuKhoa(filters) {
     const [items, setItems] = useState([]);
     const [meta, setMeta] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
     const [reloadKey, setReloadKey] = useState(0);
-    const requestIdRef = useRef(0);
+    const thamChieuMaYeuCau = useRef(0);
 
     useEffect(() => {
-        const abortController = new AbortController();
-        const nextRequestId = requestIdRef.current + 1;
-        requestIdRef.current = nextRequestId;
+        const boHuyYeuCau = new AbortController();
+        const maYeuCauTiepTheo = thamChieuMaYeuCau.current + 1;
+        thamChieuMaYeuCau.current = maYeuCauTiepTheo;
 
         setIsLoading(true);
         setError("");
 
-        fetchKeywordInsights(filters, abortController.signal)
+        taiThongTinTuKhoa(filters, boHuyYeuCau.signal)
             .then((payload) => {
-                if (abortController.signal.aborted || requestIdRef.current !== nextRequestId) {
+                if (boHuyYeuCau.signal.aborted || thamChieuMaYeuCau.current !== maYeuCauTiepTheo) {
                     return;
                 }
 
@@ -27,7 +27,7 @@ export function useKeywordInsights(filters) {
                 setMeta(payload.meta || {});
             })
             .catch((fetchError) => {
-                if (abortController.signal.aborted || requestIdRef.current !== nextRequestId) {
+                if (boHuyYeuCau.signal.aborted || thamChieuMaYeuCau.current !== maYeuCauTiepTheo) {
                     return;
                 }
 
@@ -36,14 +36,14 @@ export function useKeywordInsights(filters) {
                 setError(fetchError.message || "Unable to load keyword insights.");
             })
             .finally(() => {
-                if (abortController.signal.aborted || requestIdRef.current !== nextRequestId) {
+                if (boHuyYeuCau.signal.aborted || thamChieuMaYeuCau.current !== maYeuCauTiepTheo) {
                     return;
                 }
 
                 setIsLoading(false);
             });
 
-        return () => abortController.abort();
+        return () => boHuyYeuCau.abort();
     }, [filters.query, filters.timeframe, filters.sortBy, reloadKey]);
 
     return {

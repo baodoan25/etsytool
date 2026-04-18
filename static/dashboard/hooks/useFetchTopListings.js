@@ -1,25 +1,25 @@
 import { useEffect, useRef, useState } from "react";
-import { fetchTopListings } from "../api/podResearchApi.js";
+import { taiListingHangDau } from "../api/podResearchApi.js";
 
-export function useFetchTopListings(filters) {
+export function dungTaiListingHangDau(filters) {
     const [items, setItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
     const [reloadKey, setReloadKey] = useState(0);
-    const requestIdRef = useRef(0);
+    const thamChieuMaYeuCau = useRef(0);
 
     useEffect(() => {
-        const abortController = new AbortController();
-        const nextRequestId = requestIdRef.current + 1;
-        requestIdRef.current = nextRequestId;
+        const boHuyYeuCau = new AbortController();
+        const maYeuCauTiepTheo = thamChieuMaYeuCau.current + 1;
+        thamChieuMaYeuCau.current = maYeuCauTiepTheo;
 
         setIsLoading(true);
         setError("");
         setItems([]);
 
-        fetchTopListings(filters, abortController.signal)
+        taiListingHangDau(filters, boHuyYeuCau.signal)
             .then((responseItems) => {
-                if (requestIdRef.current !== nextRequestId) {
+                if (thamChieuMaYeuCau.current !== maYeuCauTiepTheo) {
                     return;
                 }
 
@@ -27,7 +27,7 @@ export function useFetchTopListings(filters) {
                 setError("");
             })
             .catch((fetchError) => {
-                if (abortController.signal.aborted || requestIdRef.current !== nextRequestId) {
+                if (boHuyYeuCau.signal.aborted || thamChieuMaYeuCau.current !== maYeuCauTiepTheo) {
                     return;
                 }
 
@@ -35,7 +35,7 @@ export function useFetchTopListings(filters) {
                 setError(fetchError.message || "Unable to load top listings.");
             })
             .finally(() => {
-                if (abortController.signal.aborted || requestIdRef.current !== nextRequestId) {
+                if (boHuyYeuCau.signal.aborted || thamChieuMaYeuCau.current !== maYeuCauTiepTheo) {
                     return;
                 }
 
@@ -43,7 +43,7 @@ export function useFetchTopListings(filters) {
             });
 
         return () => {
-            abortController.abort();
+            boHuyYeuCau.abort();
         };
     }, [
         filters.date,

@@ -1,11 +1,11 @@
 import { Link2, Megaphone, Star, Tags } from "lucide-react";
-import { usaEventMonths } from "../data/usaEvents.js";
+import { cacThangSuKienUsa } from "../data/usaEvents.js";
 import { html } from "../utils/html.js";
 
-const importantEvents = usaEventMonths.flatMap((month) => month.events).filter((event) => event.important);
-const totalEvents = usaEventMonths.reduce((total, month) => total + month.events.length, 0);
+const cacSuKienQuanTrong = cacThangSuKienUsa.flatMap((month) => month.events).filter((event) => event.important);
+const tongSuKien = cacThangSuKienUsa.reduce((total, month) => total + month.events.length, 0);
 
-function EventCard({ event, onKeywordSelect }) {
+function TheSuKien({ event, onKeywordSelect }) {
     return html`
         <article className=${`rounded-2xl border p-4 ${
             event.important
@@ -60,7 +60,7 @@ function EventCard({ event, onKeywordSelect }) {
     `;
 }
 
-function MonthBlock({ month, onKeywordSelect }) {
+function KhoiThang({ month, onKeywordSelect }) {
     return html`
         <section className="overflow-hidden rounded-[28px] border border-border bg-white shadow-panel">
             <div className="flex items-center justify-between border-b border-border bg-canvas/60 px-5 py-4">
@@ -71,14 +71,14 @@ function MonthBlock({ month, onKeywordSelect }) {
             </div>
             <div className="grid gap-4 p-4">
                 ${month.events.map((event) => html`
-                    <${EventCard} key=${`${month.month}-${event.title}`} event=${event} onKeywordSelect=${onKeywordSelect} />
+                    <${TheSuKien} key=${`${month.month}-${event.title}`} event=${event} onKeywordSelect=${onKeywordSelect} />
                 `)}
             </div>
         </section>
     `;
 }
 
-export function EtsyEventCalendarPage({ onKeywordSelect }) {
+export function TrangLichSuKienEtsy({ onKeywordSelect }) {
     return html`
         <main className="pr-2">
             <section className="mb-5 flex items-end justify-between gap-6">
@@ -92,11 +92,11 @@ export function EtsyEventCalendarPage({ onKeywordSelect }) {
                 <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-[26px] border border-border bg-white px-5 py-3 shadow-sm">
                         <p className="stat-label text-[10px] text-muted">USA Events</p>
-                        <p className="mt-1 font-display text-2xl text-sunrise">${totalEvents}</p>
+                        <p className="mt-1 font-display text-2xl text-sunrise">${tongSuKien}</p>
                     </div>
                     <div className="rounded-[26px] border border-accent/40 bg-accentSoft px-5 py-3 shadow-sm">
                         <p className="stat-label text-[10px] text-muted">Starred</p>
-                        <p className="mt-1 font-display text-2xl text-sunrise">${importantEvents.length}</p>
+                        <p className="mt-1 font-display text-2xl text-sunrise">${cacSuKienQuanTrong.length}</p>
                     </div>
                 </div>
             </section>
@@ -134,8 +134,8 @@ export function EtsyEventCalendarPage({ onKeywordSelect }) {
             </section>
 
             <section className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-5 pb-8">
-                ${usaEventMonths.map((month) => html`
-                    <${MonthBlock} key=${month.month} month=${month} onKeywordSelect=${onKeywordSelect} />
+                ${cacThangSuKienUsa.map((month) => html`
+                    <${KhoiThang} key=${month.month} month=${month} onKeywordSelect=${onKeywordSelect} />
                 `)}
             </section>
         </main>

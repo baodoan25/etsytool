@@ -1,27 +1,27 @@
 import { useDeferredValue, useState } from "react";
 import { ArrowUpRight, BarChart3, Heart, Store } from "lucide-react";
-import { Sidebar } from "./components/Sidebar.js";
-import { Header } from "./components/Header.js";
-import { KeywordInsightsResearchPage } from "./components/KeywordInsightsResearchPage.js";
-import { EtsyEventCalendarPage } from "./components/EtsyEventCalendarPage.js";
-import { CompetitorTrackingPage } from "./components/CompetitorTrackingPage.js";
-import { ProductCard } from "./components/ProductCard.js";
-import { ListingModal } from "./components/ListingModal.js";
-import { FallbackState } from "./components/FallbackState.js";
-import { GridSkeleton } from "./components/GridSkeleton.js";
-import { useFetchTopListings } from "./hooks/useFetchTopListings.js";
-import { formatCompactNumber, formatNumber } from "./utils/formatters.js";
+import { ThanhBen } from "./components/Sidebar.js";
+import { DauTrang } from "./components/Header.js";
+import { TrangNghienCuuThongTinTuKhoa } from "./components/KeywordInsightsResearchPage.js";
+import { TrangLichSuKienEtsy } from "./components/EtsyEventCalendarPage.js";
+import { TrangTheoDoiDoiThu } from "./components/CompetitorTrackingPage.js";
+import { TheSanPham } from "./components/ProductCard.js";
+import { HopThoaiListing } from "./components/ListingModal.js";
+import { TrangThaiDuPhong } from "./components/FallbackState.js";
+import { LuoiKhungTai } from "./components/GridSkeleton.js";
+import { dungTaiListingHangDau } from "./hooks/useFetchTopListings.js";
+import { dinhDangSoGon, dinhDangSo } from "./utils/formatters.js";
 import { html } from "./utils/html.js";
 
-function getTodayDateValue() {
+function layGiaTriNgayHomNay() {
     const now = new Date();
     const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
     return localDate.toISOString().slice(0, 10);
 }
 
-function createInitialFilters() {
+function taoBoLocBanDau() {
     return {
-        date: getTodayDateValue(),
+        date: layGiaTriNgayHomNay(),
         searchMode: "keyword",
         searchQuery: "",
         createdTime: "all",
@@ -32,7 +32,7 @@ function createInitialFilters() {
     };
 }
 
-function normalizeCategoryOption(option) {
+function chuanHoaLuaChonDanhMuc(option) {
     if (typeof option === "string") {
         return { value: option, label: option };
     }
@@ -43,7 +43,7 @@ function normalizeCategoryOption(option) {
     };
 }
 
-const defaultCategories = [
+const cacDanhMucMacDinh = [
     { value: "all", label: "All Etsy Categories" },
     { value: "clothing", label: "Clothing" },
     { value: "home-and-living", label: "Home & Living" },
@@ -54,35 +54,35 @@ const defaultCategories = [
     { value: "weddings", label: "Weddings" },
 ];
 
-export function AppRoot() {
-    const categoryOptions = (window.__POD_RESEARCH_TAXONOMY__ || defaultCategories).map(normalizeCategoryOption);
-    const [filters, setFilters] = useState(createInitialFilters);
+export function GocUngDung() {
+    const cacLuaChonDanhMuc = (window.__POD_RESEARCH_TAXONOMY__ || cacDanhMucMacDinh).map(chuanHoaLuaChonDanhMuc);
+    const [filters, setFilters] = useState(taoBoLocBanDau);
     const [activeSection, setActiveSection] = useState("research");
     const [keywordInsightQuery, setKeywordInsightQuery] = useState("");
     const [selectedListing, setSelectedListing] = useState(null);
-    const deferredQuery = useDeferredValue(filters.searchQuery);
-    const apiFilters = {
+    const truyVanTriHoan = useDeferredValue(filters.searchQuery);
+    const boLocApi = {
         ...filters,
-        searchQuery: deferredQuery.trim(),
+        searchQuery: truyVanTriHoan.trim(),
     };
-    const { items: listings, isLoading, error, refetch } = useFetchTopListings(apiFilters);
+    const { items: listings, isLoading, error, refetch } = dungTaiListingHangDau(boLocApi);
 
-    const topEstimatedListing = [...listings].sort((first, second) => second.estimatedSales - first.estimatedSales)[0];
-    const largestShopListing = [...listings].sort((first, second) => second.totalShopSales - first.totalShopSales)[0];
-    const favoriteLeader = [...listings].sort((first, second) => second.favorites - first.favorites)[0];
+    const listingUocTinhCaoNhat = [...listings].sort((first, second) => second.estimatedSales - first.estimatedSales)[0];
+    const listingShopLonNhat = [...listings].sort((first, second) => second.totalShopSales - first.totalShopSales)[0];
+    const listingDanDauYeuThich = [...listings].sort((first, second) => second.favorites - first.favorites)[0];
 
-    const handleFilterChange = (field, value) => {
+    const xuLyDoiBoLoc = (field, value) => {
         setFilters((current) => ({
             ...current,
             [field]: value,
         }));
     };
 
-    const resetFilters = () => {
-        setFilters(createInitialFilters());
+    const datLaiBoLoc = () => {
+        setFilters(taoBoLocBanDau());
     };
 
-    const openKeywordInsight = (keyword) => {
+    const moThongTinTuKhoa = (keyword) => {
         setKeywordInsightQuery(keyword);
         setActiveSection("keywords");
     };
@@ -91,15 +91,15 @@ export function AppRoot() {
         <div className="relative flex min-h-screen items-start overflow-visible">
             <div className="backdrop-mesh pointer-events-none fixed inset-0 opacity-50"></div>
 
-            <${Sidebar} activeItem=${activeSection} onSelect=${setActiveSection} />
+            <${ThanhBen} activeItem=${activeSection} onSelect=${setActiveSection} />
 
             <div className="relative z-10 min-w-0 flex-1 px-6 py-5">
                 ${activeSection === "keywords" ? html`
-                    <${KeywordInsightsResearchPage} initialQuery=${keywordInsightQuery} />
+                    <${TrangNghienCuuThongTinTuKhoa} initialQuery=${keywordInsightQuery} />
                 ` : activeSection === "calendar" ? html`
-                    <${EtsyEventCalendarPage} onKeywordSelect=${openKeywordInsight} />
+                    <${TrangLichSuKienEtsy} onKeywordSelect=${moThongTinTuKhoa} />
                 ` : activeSection === "competitors" ? html`
-                    <${CompetitorTrackingPage}
+                    <${TrangTheoDoiDoiThu}
                         listings=${listings}
                         isLoading=${isLoading}
                         error=${error}
@@ -107,14 +107,14 @@ export function AppRoot() {
                         timeframe=${filters.timeframe}
                     />
                 ` : html`
-                    <${Header}
-                        categories=${categoryOptions}
+                    <${DauTrang}
+                        categories=${cacLuaChonDanhMuc}
                         filters=${filters}
-                        onFilterChange=${handleFilterChange}
+                        onFilterChange=${xuLyDoiBoLoc}
                         resultCount=${listings.length}
-                        topEstimatedSales=${formatNumber(topEstimatedListing?.estimatedSales || 0)}
-                        maxShopSales=${formatCompactNumber(largestShopListing?.totalShopSales || 0)}
-                        maxFavorites=${formatCompactNumber(favoriteLeader?.favorites || 0)}
+                        topEstimatedSales=${dinhDangSo(listingUocTinhCaoNhat?.estimatedSales || 0)}
+                        maxShopSales=${dinhDangSoGon(listingShopLonNhat?.totalShopSales || 0)}
+                        maxFavorites=${dinhDangSoGon(listingDanDauYeuThich?.favorites || 0)}
                         isLoading=${isLoading}
                     />
 
@@ -125,10 +125,10 @@ export function AppRoot() {
                                 <${BarChart3} className="h-4 w-4 text-accent" />
                                 Top Estimated Sales
                             </div>
-                            ${topEstimatedListing ? html`
-                                <p className="font-display text-xl text-ink">${topEstimatedListing.shopName}</p>
+                            ${listingUocTinhCaoNhat ? html`
+                                <p className="font-display text-xl text-ink">${listingUocTinhCaoNhat.shopName}</p>
                                 <p className="mt-2 text-sm text-muted">
-                                    Strongest shop in the current API response with ${formatNumber(topEstimatedListing.estimatedSales)} estimated sales for the selected timeframe.
+                                    Strongest shop in the current API response with ${dinhDangSo(listingUocTinhCaoNhat.estimatedSales)} estimated sales for the selected timeframe.
                                 </p>
                             ` : html`<p className="text-sm text-muted">The top estimated-sales shop will appear here after the API returns data.</p>`}
                         </div>
@@ -138,10 +138,10 @@ export function AppRoot() {
                                 <${Store} className="h-4 w-4 text-sunrise" />
                                 Largest Shop Footprint
                             </div>
-                            ${largestShopListing ? html`
-                                <p className="font-display text-xl text-ink">${largestShopListing.shopName}</p>
+                            ${listingShopLonNhat ? html`
+                                <p className="font-display text-xl text-ink">${listingShopLonNhat.shopName}</p>
                                 <p className="mt-2 text-sm text-muted">
-                                    Highest tracked shop total inside the current category result set at ${formatCompactNumber(largestShopListing.totalShopSales)} cumulative sales.
+                                    Highest tracked shop total inside the current category result set at ${dinhDangSoGon(listingShopLonNhat.totalShopSales)} cumulative sales.
                                 </p>
                             ` : html`<p className="text-sm text-muted">Largest tracked shop sales will appear here when the API responds.</p>`}
                         </div>
@@ -151,10 +151,10 @@ export function AppRoot() {
                                 <${Heart} className="h-4 w-4 text-accent" />
                                 Favorite Leader
                             </div>
-                            ${favoriteLeader ? html`
-                                <p className="font-display text-xl text-ink">${favoriteLeader.shopName}</p>
+                            ${listingDanDauYeuThich ? html`
+                                <p className="font-display text-xl text-ink">${listingDanDauYeuThich.shopName}</p>
                                 <p className="mt-2 text-sm text-muted">
-                                    This shop currently leads the returned grid with ${formatCompactNumber(favoriteLeader.favorites)} favorites.
+                                    This shop currently leads the returned grid with ${dinhDangSoGon(listingDanDauYeuThich.favorites)} favorites.
                                 </p>
                             ` : html`<p className="text-sm text-muted">Shop favorite counts will appear here once the ranking API returns results.</p>`}
                         </div>
@@ -174,9 +174,9 @@ export function AppRoot() {
                     </section>
 
                     ${isLoading ? html`
-                        <${GridSkeleton} />
+                        <${LuoiKhungTai} />
                     ` : error ? html`
-                        <${FallbackState}
+                        <${TrangThaiDuPhong}
                             tone="error"
                             title="Top listings API returned an error"
                             description=${error}
@@ -186,7 +186,7 @@ export function AppRoot() {
                     ` : listings.length ? html`
                         <section className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5 pb-8">
                             ${listings.map((listing) => html`
-                                <${ProductCard}
+                                <${TheSanPham}
                                     key=${listing.listingId}
                                     listing=${listing}
                                     timeframe=${filters.timeframe}
@@ -195,11 +195,11 @@ export function AppRoot() {
                             `)}
                         </section>
                     ` : html`
-                        <${FallbackState}
+                        <${TrangThaiDuPhong}
                             tone="empty"
                             title="No top shops found for this niche"
                             description="The API returned no active Etsy listings for the selected taxonomy category, research date, timeframe, and niche query. Reset the filters or widen the category scope to continue."
-                            onRetry=${resetFilters}
+                            onRetry=${datLaiBoLoc}
                             actionLabel="Reset filters"
                         />
                     `}
@@ -207,7 +207,7 @@ export function AppRoot() {
                 `}
             </div>
 
-            <${ListingModal}
+            <${HopThoaiListing}
                 listing=${selectedListing}
                 timeframe=${filters.timeframe}
                 onClose=${() => setSelectedListing(null)}

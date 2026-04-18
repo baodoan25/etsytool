@@ -7,9 +7,9 @@ import {
 } from "lucide-react";
 import { html } from "../utils/html.js";
 
-const logoSrc = "/static/dashboard/assets/vh-media-logo.png";
+const nguonLogo = "/static/dashboard/assets/vh-media-logo.png";
 
-const navigationItems = [
+const cacMucDieuHuong = [
     { id: "research", label: "Product Research", icon: Home },
     { id: "keywords", label: "Keyword Insights", icon: Search },
     { id: "calendar", label: "Etsy Event Calendar", icon: CalendarRange },
@@ -17,12 +17,12 @@ const navigationItems = [
     { id: "favorites", label: "Favorites", icon: Heart },
 ];
 
-export function Sidebar({ activeItem, onSelect }) {
+export function ThanhBen({ activeItem, onSelect }) {
     return html`
         <aside className="group/sidebar sticky top-0 relative flex h-screen w-[96px] shrink-0 flex-col border-r border-white/50 bg-sidebar/80 px-4 py-5 backdrop-blur-xl transition-all duration-300 ease-out hover:w-[248px]">
             <div className="mb-7 flex items-center gap-3 overflow-hidden rounded-[28px] sidebar-pill px-3 py-3">
                 <img
-                    src=${logoSrc}
+                    src=${nguonLogo}
                     alt="VH Media"
                     className="h-12 w-12 shrink-0 rounded-2xl object-cover shadow-panel"
                 />
@@ -33,7 +33,7 @@ export function Sidebar({ activeItem, onSelect }) {
             </div>
 
             <nav className="flex flex-1 flex-col gap-2">
-                ${navigationItems.map((item) => {
+                ${cacMucDieuHuong.map((item) => {
                     const Icon = item.icon;
                     const isActive = activeItem === item.id;
 

@@ -43,19 +43,19 @@
  * @property {ListingTagSlot[]} tags
  */
 
-export function asNumber(value) {
-    const parsedValue = Number(value);
-    return Number.isFinite(parsedValue) ? parsedValue : 0;
+export function thanhSo(value) {
+    const giaTriDaPhanTich = Number(value);
+    return Number.isFinite(giaTriDaPhanTich) ? parsedValue : 0;
 }
 
-export function asBoolean(value) {
+export function thanhBoolean(value) {
     if (typeof value === "boolean") {
         return value;
     }
 
     if (typeof value === "string") {
-        const normalizedValue = value.trim().toLowerCase();
-        return normalizedValue === "true" || normalizedValue === "1" || normalizedValue === "yes";
+        const giaTriDaChuanHoa = value.trim().toLowerCase();
+        return giaTriDaChuanHoa === "true" || giaTriDaChuanHoa === "1" || giaTriDaChuanHoa === "yes";
     }
 
     if (typeof value === "number") {
@@ -65,7 +65,7 @@ export function asBoolean(value) {
     return false;
 }
 
-export function asString(value, fallback = "") {
+export function thanhChuoi(value, fallback = "") {
     if (value === undefined || value === null) {
         return fallback;
     }
@@ -73,12 +73,12 @@ export function asString(value, fallback = "") {
     return String(value);
 }
 
-function getImageCandidate(image) {
+function layUngVienAnh(image) {
     if (!image || typeof image !== "object") {
         return "";
     }
 
-    return asString(
+    return thanhChuoi(
         image.url_fullxfull
         || image.url_570xN
         || image.url_340x270
@@ -87,26 +87,26 @@ function getImageCandidate(image) {
     );
 }
 
-export function pickImageUrl(source, fallbackUrl = "") {
-    const imageCollections = [
+export function chonUrlAnh(source, fallbackUrl = "") {
+    const cacTapAnh = [
         source?.images,
         source?.listingImages,
         source?.imageResults,
         source?.photos,
     ];
 
-    for (const collection of imageCollections) {
+    for (const collection of cacTapAnh) {
         if (!Array.isArray(collection) || !collection.length) {
             continue;
         }
 
-        const candidate = getImageCandidate(collection[0]);
+        const candidate = layUngVienAnh(collection[0]);
         if (candidate) {
             return candidate;
         }
     }
 
-    return asString(
+    return thanhChuoi(
         source?.thumbnailUrl
         || source?.imageUrl
         || source?.image
@@ -114,7 +114,7 @@ export function pickImageUrl(source, fallbackUrl = "") {
     );
 }
 
-function getTagLabel(rawTag) {
+function layNhanThe(rawTag) {
     if (!rawTag) {
         return "";
     }
@@ -123,14 +123,14 @@ function getTagLabel(rawTag) {
         return rawTag.trim();
     }
 
-    return asString(rawTag.label || rawTag.name || rawTag.value).trim();
+    return thanhChuoi(rawTag.label || rawTag.name || rawTag.value).trim();
 }
 
-export function normalizeTagSlots(rawTags = [], slotCount = 13) {
+export function chuanHoaOThe(rawTags = [], slotCount = 13) {
     const tags = rawTags
         .map((tag, index) => ({
-            id: `tag-${index + 1}-${getTagLabel(tag).toLowerCase().replace(/\s+/g, "-")}`,
-            label: getTagLabel(tag),
+            id: `tag-${index + 1}-${layNhanThe(tag).toLowerCase().replace(/\s+/g, "-")}`,
+            label: layNhanThe(tag),
             isPlaceholder: false,
         }))
         .filter((tag) => tag.label)
@@ -147,7 +147,7 @@ export function normalizeTagSlots(rawTags = [], slotCount = 13) {
     return tags;
 }
 
-function extractCollectionItems(payload) {
+function trichCacMucTapHop(payload) {
     if (Array.isArray(payload)) {
         return payload;
     }
@@ -155,71 +155,71 @@ function extractCollectionItems(payload) {
     return payload?.items || payload?.results || payload?.data || payload?.listings || [];
 }
 
-export function normalizeTopListing(rawListing) {
-    const listingId = asString(rawListing?.listingId || rawListing?.id);
+export function chuanHoaListingHangDau(rawListing) {
+    const listingId = thanhChuoi(rawListing?.listingId || rawListing?.id);
 
     return {
         listingId,
-        listingTitle: asString(rawListing?.listingTitle || rawListing?.title),
-        listingUrl: asString(rawListing?.listingUrl || rawListing?.url),
-        listingUrlVerified: asBoolean(rawListing?.listingUrlVerified || rawListing?.isListingUrlVerified),
-        shopName: asString(rawListing?.shopName, "Unknown shop"),
-        shopUrl: asString(rawListing?.shopUrl),
-        shopUrlVerified: asBoolean(rawListing?.shopUrlVerified || rawListing?.isShopUrlVerified),
-        shopAvatarUrl: asString(rawListing?.shopAvatarUrl || rawListing?.avatarUrl || rawListing?.iconUrl),
-        createdAt: asString(rawListing?.createdAt || rawListing?.createdDate || rawListing?.shopCreatedAt),
-        country: asString(rawListing?.country || rawListing?.location || rawListing?.shopCountry),
-        listingCount: asNumber(rawListing?.listingCount || rawListing?.listings),
-        shopFavorites: asNumber(rawListing?.shopFavorites || rawListing?.favorites),
-        shopReviews: asNumber(rawListing?.shopReviews || rawListing?.reviews),
-        sales1Day: asNumber(rawListing?.sales1Day || rawListing?.sales_1_day),
-        sales7Day: asNumber(rawListing?.sales7Day || rawListing?.sales_7_day),
-        sales30Day: asNumber(rawListing?.sales30Day || rawListing?.sales_30_day),
-        thumbnailUrl: pickImageUrl(rawListing, rawListing?.shopAvatarUrl || rawListing?.avatarUrl || rawListing?.iconUrl || ""),
-        price: asNumber(rawListing?.price),
-        totalShopSales: asNumber(rawListing?.totalShopSales),
-        estimatedSales: asNumber(rawListing?.estimatedSales),
-        views: asNumber(rawListing?.views),
-        favorites: asNumber(rawListing?.favorites),
+        listingTitle: thanhChuoi(rawListing?.listingTitle || rawListing?.title),
+        listingUrl: thanhChuoi(rawListing?.listingUrl || rawListing?.url),
+        listingUrlVerified: thanhBoolean(rawListing?.listingUrlVerified || rawListing?.isListingUrlVerified),
+        shopName: thanhChuoi(rawListing?.shopName, "Unknown shop"),
+        shopUrl: thanhChuoi(rawListing?.shopUrl),
+        shopUrlVerified: thanhBoolean(rawListing?.shopUrlVerified || rawListing?.isShopUrlVerified),
+        shopAvatarUrl: thanhChuoi(rawListing?.shopAvatarUrl || rawListing?.avatarUrl || rawListing?.iconUrl),
+        createdAt: thanhChuoi(rawListing?.createdAt || rawListing?.createdDate || rawListing?.shopCreatedAt),
+        country: thanhChuoi(rawListing?.country || rawListing?.location || rawListing?.shopCountry),
+        listingCount: thanhSo(rawListing?.listingCount || rawListing?.listings),
+        shopFavorites: thanhSo(rawListing?.shopFavorites || rawListing?.favorites),
+        shopReviews: thanhSo(rawListing?.shopReviews || rawListing?.reviews),
+        sales1Day: thanhSo(rawListing?.sales1Day || rawListing?.sales_1_day),
+        sales7Day: thanhSo(rawListing?.sales7Day || rawListing?.sales_7_day),
+        sales30Day: thanhSo(rawListing?.sales30Day || rawListing?.sales_30_day),
+        thumbnailUrl: chonUrlAnh(rawListing, rawListing?.shopAvatarUrl || rawListing?.avatarUrl || rawListing?.iconUrl || ""),
+        price: thanhSo(rawListing?.price),
+        totalShopSales: thanhSo(rawListing?.totalShopSales),
+        estimatedSales: thanhSo(rawListing?.estimatedSales),
+        views: thanhSo(rawListing?.views),
+        favorites: thanhSo(rawListing?.favorites),
         keywords: Array.isArray(rawListing?.keywords) ? rawListing.keywords : [],
         tags: Array.isArray(rawListing?.tags) ? rawListing.tags : [],
         bestSellers: Array.isArray(rawListing?.bestSellers)
             ? rawListing.bestSellers.map((product, index) => ({
-                listingId: asString(product?.listingId || product?.id || `${listingId}-best-${index + 1}`),
-                title: asString(product?.title || product?.listingTitle, `Best seller ${index + 1}`),
-                listingUrl: asString(product?.listingUrl || product?.url),
-                listingUrlVerified: asBoolean(product?.listingUrlVerified || product?.isListingUrlVerified),
-                shopSearchUrlVerified: asBoolean(product?.shopSearchUrlVerified),
-                imageUrl: pickImageUrl(product, product?.imageUrl || ""),
-                price: asNumber(product?.price),
-                sales: asNumber(product?.sales || product?.estimatedSales),
-                favorites: asNumber(product?.favorites),
+                listingId: thanhChuoi(product?.listingId || product?.id || `${listingId}-best-${index + 1}`),
+                title: thanhChuoi(product?.title || product?.listingTitle, `Best seller ${index + 1}`),
+                listingUrl: thanhChuoi(product?.listingUrl || product?.url),
+                listingUrlVerified: thanhBoolean(product?.listingUrlVerified || product?.isListingUrlVerified),
+                shopSearchUrlVerified: thanhBoolean(product?.shopSearchUrlVerified),
+                imageUrl: chonUrlAnh(product, product?.imageUrl || ""),
+                price: thanhSo(product?.price),
+                sales: thanhSo(product?.sales || product?.estimatedSales),
+                favorites: thanhSo(product?.favorites),
             })).slice(0, 4)
             : [],
     };
 }
 
-export function normalizeTopListingsCollection(payload) {
-    return extractCollectionItems(payload)
-        .map(normalizeTopListing)
+export function chuanHoaTapListingHangDau(payload) {
+    return trichCacMucTapHop(payload)
+        .map(chuanHoaListingHangDau)
         .filter((listing) => listing.listingId);
 }
 
-export function normalizeListingDetails(rawDetails, listingSummary = null) {
+export function chuanHoaChiTietListing(rawDetails, listingSummary = null) {
     return {
-        listingId: asString(rawDetails?.listingId || rawDetails?.id || listingSummary?.listingId),
-        title: asString(
+        listingId: thanhChuoi(rawDetails?.listingId || rawDetails?.id || listingSummary?.listingId),
+        title: thanhChuoi(
             rawDetails?.title,
             listingSummary?.listingTitle || `Listing #${listingSummary?.listingId || ""}`.trim(),
         ),
-        imageUrl: pickImageUrl(rawDetails, listingSummary?.thumbnailUrl || ""),
-        listingUrl: asString(rawDetails?.listingUrl || rawDetails?.url || listingSummary?.listingUrl),
-        listingUrlVerified: asBoolean(
+        imageUrl: chonUrlAnh(rawDetails, listingSummary?.thumbnailUrl || ""),
+        listingUrl: thanhChuoi(rawDetails?.listingUrl || rawDetails?.url || listingSummary?.listingUrl),
+        listingUrlVerified: thanhBoolean(
             rawDetails?.listingUrlVerified
             || rawDetails?.isListingUrlVerified
             || listingSummary?.listingUrlVerified,
         ),
-        shopName: asString(rawDetails?.shopName || listingSummary?.shopName, "Unknown shop"),
-        tags: normalizeTagSlots(rawDetails?.tags || rawDetails?.keywords || []),
+        shopName: thanhChuoi(rawDetails?.shopName || listingSummary?.shopName, "Unknown shop"),
+        tags: chuanHoaOThe(rawDetails?.tags || rawDetails?.keywords || []),
     };
 }

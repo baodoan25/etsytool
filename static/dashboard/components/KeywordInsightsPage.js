@@ -1,24 +1,24 @@
 import { useDeferredValue, useEffect, useState } from "react";
 import { CalendarDays, Search, Sparkles, TrendingUp } from "lucide-react";
-import { useKeywordInsights } from "../hooks/useKeywordInsights.js";
-import { formatCompactNumber, formatNumber } from "../utils/formatters.js";
+import { dungThongTinTuKhoa } from "../hooks/useKeywordInsights.js";
+import { dinhDangSoGon, dinhDangSo } from "../utils/formatters.js";
 import { html } from "../utils/html.js";
-import { FallbackState } from "./FallbackState.js";
+import { TrangThaiDuPhong } from "./FallbackState.js";
 
-const timeframeOptions = [
+const cacLuaChonKhoangThoiGian = [
     { value: "1", label: "1 Day" },
     { value: "7", label: "7 Days" },
     { value: "30", label: "30 Days" },
 ];
 
-const sortOptions = [
+const cacLuaChonSapXep = [
     { value: "sales", label: "Sales" },
     { value: "score", label: "Score" },
     { value: "new-listings", label: "New Listings" },
     { value: "holiday-fit", label: "USA Holiday Fit" },
 ];
 
-function KeywordSkeleton() {
+function KhungTaiTuKhoa() {
     return html`
         <div className="overflow-hidden rounded-[28px] border border-border bg-white shadow-panel">
             ${Array.from({ length: 8 }, (_, index) => html`
@@ -38,7 +38,7 @@ function KeywordSkeleton() {
     `;
 }
 
-function PercentBadge({ label, value, tone }) {
+function NhanPhanTram({ label, value, tone }) {
     const toneClass = tone === "digital"
         ? "bg-sunriseSoft text-sunrise"
         : "bg-blue-50 text-blue-700";
@@ -50,7 +50,7 @@ function PercentBadge({ label, value, tone }) {
     `;
 }
 
-function HolidayBadge({ item }) {
+function NhanNgayLe({ item }) {
     const fitClass = item.holidayFit === "High"
         ? "bg-successSoft text-success"
         : item.holidayFit === "Medium"
@@ -76,7 +76,7 @@ function HolidayBadge({ item }) {
     `;
 }
 
-function KeywordRow({ item, index }) {
+function DongTuKhoa({ item, index }) {
     return html`
         <tr className=${index % 2 === 0 ? "bg-canvas/70" : "bg-white"}>
             <td className="px-6 py-6 align-middle">
@@ -92,41 +92,41 @@ function KeywordRow({ item, index }) {
             </td>
             <td className="px-6 py-6 align-middle">
                 <div className="text-lg font-semibold text-ink">
-                    ${formatNumber(item.sales)}
-                    <span className="ml-2 text-sm font-medium text-success">↑ ${formatNumber(item.growthPercent)}%</span>
+                    ${dinhDangSo(item.sales)}
+                    <span className="ml-2 text-sm font-medium text-success">↑ ${dinhDangSo(item.growthPercent)}%</span>
                 </div>
-                <p className="mt-1 text-sm text-muted">Previous period: ${formatNumber(item.previousSales)} sales</p>
+                <p className="mt-1 text-sm text-muted">Previous period: ${dinhDangSo(item.previousSales)} sales</p>
             </td>
             <td className="px-6 py-6 align-middle">
                 <span className="font-display text-xl text-sunrise">${item.score}</span>
             </td>
             <td className="px-6 py-6 align-middle">
                 <div className="text-lg font-semibold text-ink">
-                    ${formatNumber(item.newListings)}
-                    <span className="ml-2 text-sm font-medium text-success">↑ ${formatNumber(item.newListingsGrowthPercent)}%</span>
+                    ${dinhDangSo(item.newListings)}
+                    <span className="ml-2 text-sm font-medium text-success">↑ ${dinhDangSo(item.newListingsGrowthPercent)}%</span>
                 </div>
             </td>
             <td className="px-6 py-6 align-middle">
-                <div className="mb-2 font-semibold text-ink">${formatCompactNumber(item.totalListings)}</div>
+                <div className="mb-2 font-semibold text-ink">${dinhDangSoGon(item.totalListings)}</div>
                 <div className="flex flex-wrap gap-2">
-                    <${PercentBadge} label="Physical" value=${item.physicalPercent} tone="physical" />
-                    <${PercentBadge} label="Digital" value=${item.digitalPercent} tone="digital" />
+                    <${NhanPhanTram} label="Physical" value=${item.physicalPercent} tone="physical" />
+                    <${NhanPhanTram} label="Digital" value=${item.digitalPercent} tone="digital" />
                 </div>
             </td>
             <td className="px-6 py-6 align-middle">
-                <${HolidayBadge} item=${item} />
+                <${NhanNgayLe} item=${item} />
             </td>
         </tr>
     `;
 }
 
-export function KeywordInsightsPage({ initialQuery = "" }) {
+export function TrangThongTinTuKhoa({ initialQuery = "" }) {
     const [query, setQuery] = useState("");
     const [timeframe, setTimeframe] = useState("1");
     const [sortBy, setSortBy] = useState("sales");
-    const deferredQuery = useDeferredValue(query);
-    const { items, isLoading, error, refetch } = useKeywordInsights({
-        query: deferredQuery,
+    const truyVanTriHoan = useDeferredValue(query);
+    const { items, isLoading, error, refetch } = dungThongTinTuKhoa({
+        query: truyVanTriHoan,
         timeframe,
         sortBy,
     });
@@ -172,7 +172,7 @@ export function KeywordInsightsPage({ initialQuery = "" }) {
                         onChange=${(event) => setTimeframe(event.target.value)}
                         className="filter-select h-12 w-[180px] rounded-xl border border-border bg-white px-4 pr-8 text-sm font-medium text-ink focus:border-accent focus:ring-0"
                     >
-                        ${timeframeOptions.map((option) => html`<option key=${option.value} value=${option.value}>${option.label}</option>`)}
+                        ${cacLuaChonKhoangThoiGian.map((option) => html`<option key=${option.value} value=${option.value}>${option.label}</option>`)}
                     </select>
 
                     <div className="relative">
@@ -182,7 +182,7 @@ export function KeywordInsightsPage({ initialQuery = "" }) {
                             onChange=${(event) => setSortBy(event.target.value)}
                             className="filter-select h-12 w-[220px] rounded-xl border border-border bg-white px-4 pr-8 text-sm font-medium text-ink focus:border-accent focus:ring-0"
                         >
-                            ${sortOptions.map((option) => html`<option key=${option.value} value=${option.value}>${option.label}</option>`)}
+                            ${cacLuaChonSapXep.map((option) => html`<option key=${option.value} value=${option.value}>${option.label}</option>`)}
                         </select>
                     </div>
 
@@ -198,9 +198,9 @@ export function KeywordInsightsPage({ initialQuery = "" }) {
             </section>
 
             ${isLoading ? html`
-                <${KeywordSkeleton} />
+                <${KhungTaiTuKhoa} />
             ` : error ? html`
-                <${FallbackState}
+                <${TrangThaiDuPhong}
                     tone="error"
                     title="Keyword insights API returned an error"
                     description=${error}
@@ -212,7 +212,7 @@ export function KeywordInsightsPage({ initialQuery = "" }) {
                     <div className="flex items-center justify-between border-b border-border px-6 py-4">
                         <div className="flex items-center gap-2 text-sm font-semibold text-muted">
                             <${TrendingUp} className="h-4 w-4 text-accent" />
-                            Ranked by ${sortOptions.find((option) => option.value === sortBy)?.label || "Sales"}
+                            Ranked by ${cacLuaChonSapXep.find((option) => option.value === sortBy)?.label || "Sales"}
                         </div>
                         <span className="rounded-full bg-accentSoft px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-accent">
                             USA market holiday mapping
@@ -231,13 +231,13 @@ export function KeywordInsightsPage({ initialQuery = "" }) {
                         </thead>
                         <tbody>
                             ${items.map((item, index) => html`
-                                <${KeywordRow} key=${item.keyword} item=${item} index=${index} />
+                                <${DongTuKhoa} key=${item.keyword} item=${item} index=${index} />
                             `)}
                         </tbody>
                     </table>
                 </section>
             ` : html`
-                <${FallbackState}
+                <${TrangThaiDuPhong}
                     tone="empty"
                     title="No keyword tags found"
                     description="Try a broader keyword, switch timeframe, or sort by sales to reload the top 13 tag opportunities."

@@ -23,25 +23,25 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
-import { FallbackState } from "./FallbackState.js";
-import { GridSkeleton } from "./GridSkeleton.js";
-import { formatCompactNumber, formatCurrency, formatNumber } from "../utils/formatters.js";
+import { TrangThaiDuPhong } from "./FallbackState.js";
+import { LuoiKhungTai } from "./GridSkeleton.js";
+import { dinhDangSoGon, dinhDangTienTe, dinhDangSo } from "../utils/formatters.js";
 import { html } from "../utils/html.js";
 import { resolveSafeExternalUrl, resolveSafeListingUrl } from "../utils/urlResolvers.js";
 
-const shopMetrics = [
+const cacChiSoShop = [
     { key: "listingCount", label: "Listings", icon: Package },
     { key: "shopFavorites", label: "Favorites", icon: Heart },
     { key: "shopReviews", label: "Reviews", icon: MessageSquare },
 ];
 
-const salesMetrics = [
+const cacChiSoDoanhSo = [
     { key: "sales1Day", label: "1 Day" },
     { key: "sales7Day", label: "7 Days" },
     { key: "sales30Day", label: "30 Days" },
 ];
 
-function buildProductImage(title, accentColor) {
+function taoAnhSanPham(title, accentColor) {
     const safeTitle = title
         .slice(0, 34)
         .replace(/&/g, "&amp;")
@@ -61,7 +61,7 @@ function buildProductImage(title, accentColor) {
     return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
-function buildRankHistory(shop) {
+function taoLichSuXepHang(shop) {
     const viewsBase = Math.max(shop.views || 1, 1);
     const salesBase = Math.max(shop.sales30Day || shop.estimatedSales || 1, 1);
     const favoriteBase = Math.max(shop.shopFavorites || shop.favorites || 1, 1);
@@ -82,13 +82,13 @@ function buildRankHistory(shop) {
     }));
 }
 
-function buildBestSellers(shop) {
+function taoSanPhamBanChay(shop) {
     if (Array.isArray(shop.bestSellers) && shop.bestSellers.length) {
         return shop.bestSellers
             .map((product, index) => ({
                 id: product.listingId || `${shop.listingId}-best-${index + 1}`,
                 title: product.title || `Best seller ${index + 1}`,
-                imageUrl: product.imageUrl || buildProductImage(product.title || `Best seller ${index + 1}`, "#f58220"),
+                imageUrl: product.imageUrl || taoAnhSanPham(product.title || `Best seller ${index + 1}`, "#f58220"),
                 url: product.listingUrl,
                 urlVerified: product.listingUrlVerified,
                 shopSearchUrlVerified: product.shopSearchUrlVerified,
@@ -103,7 +103,7 @@ function buildBestSellers(shop) {
     return [];
 }
 
-function CompetitorCard({ listing, timeframe, onSelect }) {
+function TheDoiThu({ listing, timeframe, onSelect }) {
     const shopLink = resolveSafeExternalUrl(listing.shopUrl, listing.shopName, listing.shopUrlVerified);
 
     return html`
@@ -135,7 +135,7 @@ function CompetitorCard({ listing, timeframe, onSelect }) {
                             </span>
                             <span className="inline-flex items-center gap-1 text-blue-600">
                                 <${BarChart3} className="h-3.5 w-3.5" />
-                                ${formatCompactNumber(listing.totalShopSales)}
+                                ${dinhDangSoGon(listing.totalShopSales)}
                             </span>
                         </div>
                     </div>
@@ -144,14 +144,14 @@ function CompetitorCard({ listing, timeframe, onSelect }) {
                 <div className="my-5 border-t border-border"></div>
 
                 <div className="grid grid-cols-3 gap-3 text-center">
-                    ${shopMetrics.map((metric) => {
+                    ${cacChiSoShop.map((metric) => {
                         const Icon = metric.icon;
 
                         return html`
                             <div key=${metric.key}>
                                 <div className="mx-auto mb-1 flex items-center justify-center gap-1 text-xl font-semibold text-ink">
                                     <${Icon} className="h-4 w-4 text-muted" />
-                                    ${formatCompactNumber(listing[metric.key])}
+                                    ${dinhDangSoGon(listing[metric.key])}
                                 </div>
                                 <div className="text-sm text-muted">${metric.label}</div>
                             </div>
@@ -162,9 +162,9 @@ function CompetitorCard({ listing, timeframe, onSelect }) {
                 <div className="my-5 border-t border-border"></div>
 
                 <div className="grid grid-cols-3 gap-3 text-center">
-                    ${salesMetrics.map((metric) => html`
+                    ${cacChiSoDoanhSo.map((metric) => html`
                         <div key=${metric.key}>
-                            <div className="text-xl font-semibold text-sunrise">${formatCompactNumber(listing[metric.key])}</div>
+                            <div className="text-xl font-semibold text-sunrise">${dinhDangSoGon(listing[metric.key])}</div>
                             <div className="mt-1 text-sm text-muted">${metric.label}</div>
                         </div>
                     `)}
@@ -204,7 +204,7 @@ function CompetitorCard({ listing, timeframe, onSelect }) {
                         Click for views, sales, favorites rank
                     </span>
                     <span className="font-semibold text-sunrise">
-                        ${formatNumber(listing.estimatedSales)} selected-period sales
+                        ${dinhDangSo(listing.estimatedSales)} selected-period sales
                     </span>
                 </div>
             </div>
@@ -212,7 +212,7 @@ function CompetitorCard({ listing, timeframe, onSelect }) {
     `;
 }
 
-function BestSellerCard({ product, shop }) {
+function TheSanPhamBanChay({ product, shop }) {
     const isDirectListing = product.url?.includes("/listing/") && product.urlVerified;
     const productLink = isDirectListing
         ? resolveSafeListingUrl(product.url, product.title, shop.shopName, product.urlVerified)
@@ -232,15 +232,15 @@ function BestSellerCard({ product, shop }) {
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center">
                     <div className="rounded-xl bg-canvas px-2 py-2">
                         <p className="text-[10px] uppercase tracking-[0.12em] text-muted">Price</p>
-                        <p className="mt-1 text-sm font-semibold text-ink">${formatCurrency(product.price)}</p>
+                        <p className="mt-1 text-sm font-semibold text-ink">${dinhDangTienTe(product.price)}</p>
                     </div>
                     <div className="rounded-xl bg-canvas px-2 py-2">
                         <p className="text-[10px] uppercase tracking-[0.12em] text-muted">Product sales</p>
-                        <p className="mt-1 text-sm font-semibold text-sunrise">${formatCompactNumber(product.estimatedSales)}</p>
+                        <p className="mt-1 text-sm font-semibold text-sunrise">${dinhDangSoGon(product.estimatedSales)}</p>
                     </div>
                     <div className="rounded-xl bg-canvas px-2 py-2">
                         <p className="text-[10px] uppercase tracking-[0.12em] text-muted">Fav</p>
-                        <p className="mt-1 text-sm font-semibold text-ink">${formatCompactNumber(product.favorites)}</p>
+                        <p className="mt-1 text-sm font-semibold text-ink">${dinhDangSoGon(product.favorites)}</p>
                     </div>
                 </div>
                 <a
@@ -258,9 +258,9 @@ function BestSellerCard({ product, shop }) {
     `;
 }
 
-function CompetitorModal({ shop, onClose }) {
-    const rankHistory = useMemo(() => (shop ? buildRankHistory(shop) : []), [shop]);
-    const bestSellers = useMemo(() => (shop ? buildBestSellers(shop) : []), [shop]);
+function HopThoaiDoiThu({ shop, onClose }) {
+    const rankHistory = useMemo(() => (shop ? taoLichSuXepHang(shop) : []), [shop]);
+    const bestSellers = useMemo(() => (shop ? taoSanPhamBanChay(shop) : []), [shop]);
     const shopLink = shop ? resolveSafeExternalUrl(shop.shopUrl, shop.shopName, shop.shopUrlVerified) : null;
 
     useEffect(() => {
@@ -342,8 +342,8 @@ function CompetitorModal({ shop, onClose }) {
                                 <${LineChart} data=${rankHistory} margin=${{ top: 8, right: 20, left: 0, bottom: 0 }}>
                                     <${CartesianGrid} strokeDasharray="3 3" stroke="#efdac7" />
                                     <${XAxis} dataKey="period" tick=${{ fill: "#8e6d55", fontSize: 12 }} axisLine=${false} tickLine=${false} />
-                                    <${YAxis} tickFormatter=${formatCompactNumber} tick=${{ fill: "#8e6d55", fontSize: 12 }} axisLine=${false} tickLine=${false} width=${58} />
-                                    <${Tooltip} formatter=${(value) => formatNumber(value)} contentStyle=${{ borderRadius: 12, border: "1px solid #efdac7" }} />
+                                    <${YAxis} tickFormatter=${dinhDangSoGon} tick=${{ fill: "#8e6d55", fontSize: 12 }} axisLine=${false} tickLine=${false} width=${58} />
+                                    <${Tooltip} formatter=${(value) => dinhDangSo(value)} contentStyle=${{ borderRadius: 12, border: "1px solid #efdac7" }} />
                                     <${Legend} />
                                     <${Line} type="monotone" dataKey="views" name="Views" stroke="#2563eb" strokeWidth=${3} dot=${false} />
                                     <${Line} type="monotone" dataKey="sales" name="Sales" stroke="#f58220" strokeWidth=${3} dot=${false} />
@@ -357,15 +357,15 @@ function CompetitorModal({ shop, onClose }) {
                 <section className="mb-5 grid grid-cols-4 gap-4">
                     <div className="rounded-[22px] border border-border bg-white px-4 py-3">
                         <p className="stat-label flex items-center gap-2 text-[10px] text-muted"><${Eye} className="h-3.5 w-3.5" />Views</p>
-                        <p className="mt-2 font-display text-2xl text-ink">${formatCompactNumber(shop.views)}</p>
+                        <p className="mt-2 font-display text-2xl text-ink">${dinhDangSoGon(shop.views)}</p>
                     </div>
                     <div className="rounded-[22px] border border-border bg-white px-4 py-3">
                         <p className="stat-label flex items-center gap-2 text-[10px] text-muted"><${BarChart3} className="h-3.5 w-3.5" />Sales 30d</p>
-                        <p className="mt-2 font-display text-2xl text-sunrise">${formatCompactNumber(shop.sales30Day)}</p>
+                        <p className="mt-2 font-display text-2xl text-sunrise">${dinhDangSoGon(shop.sales30Day)}</p>
                     </div>
                     <div className="rounded-[22px] border border-border bg-white px-4 py-3">
                         <p className="stat-label flex items-center gap-2 text-[10px] text-muted"><${Heart} className="h-3.5 w-3.5" />Favorites</p>
-                        <p className="mt-2 font-display text-2xl text-ink">${formatCompactNumber(shop.shopFavorites)}</p>
+                        <p className="mt-2 font-display text-2xl text-ink">${dinhDangSoGon(shop.shopFavorites)}</p>
                     </div>
                     <div className="rounded-[22px] border border-border bg-white px-4 py-3">
                         <p className="stat-label flex items-center gap-2 text-[10px] text-muted"><${ShoppingBag} className="h-3.5 w-3.5" />Best sellers</p>
@@ -387,7 +387,7 @@ function CompetitorModal({ shop, onClose }) {
                     ${bestSellers.length ? html`
                         <div className="grid grid-cols-[repeat(auto-fit,minmax(230px,1fr))] gap-4">
                             ${bestSellers.map((product) => html`
-                                <${BestSellerCard} key=${product.id} product=${product} shop=${shop} />
+                                <${TheSanPhamBanChay} key=${product.id} product=${product} shop=${shop} />
                             `)}
                         </div>
                     ` : html`
@@ -401,7 +401,7 @@ function CompetitorModal({ shop, onClose }) {
     `;
 }
 
-export function CompetitorTrackingPage({ listings, isLoading, error, refetch, timeframe }) {
+export function TrangTheoDoiDoiThu({ listings, isLoading, error, refetch, timeframe }) {
     const [selectedShop, setSelectedShop] = useState(null);
     const topSalesShop = [...listings].sort((first, second) => second.sales30Day - first.sales30Day)[0];
     const topViewsShop = [...listings].sort((first, second) => second.views - first.views)[0];
@@ -431,7 +431,7 @@ export function CompetitorTrackingPage({ listings, isLoading, error, refetch, ti
                     </div>
                     ${topSalesShop ? html`
                         <p className="font-display text-xl text-ink">${topSalesShop.shopName}</p>
-                        <p className="mt-2 text-sm text-muted">${formatCompactNumber(topSalesShop.sales30Day)} sales over 30 days.</p>
+                        <p className="mt-2 text-sm text-muted">${dinhDangSoGon(topSalesShop.sales30Day)} sales over 30 days.</p>
                     ` : html`<p className="text-sm text-muted">Sales leader appears after competitor data loads.</p>`}
                 </div>
 
@@ -442,7 +442,7 @@ export function CompetitorTrackingPage({ listings, isLoading, error, refetch, ti
                     </div>
                     ${topViewsShop ? html`
                         <p className="font-display text-xl text-ink">${topViewsShop.shopName}</p>
-                        <p className="mt-2 text-sm text-muted">${formatCompactNumber(topViewsShop.views)} tracked views.</p>
+                        <p className="mt-2 text-sm text-muted">${dinhDangSoGon(topViewsShop.views)} tracked views.</p>
                     ` : html`<p className="text-sm text-muted">View leader appears after competitor data loads.</p>`}
                 </div>
 
@@ -453,7 +453,7 @@ export function CompetitorTrackingPage({ listings, isLoading, error, refetch, ti
                     </div>
                     ${topFavoritesShop ? html`
                         <p className="font-display text-xl text-ink">${topFavoritesShop.shopName}</p>
-                        <p className="mt-2 text-sm text-muted">${formatCompactNumber(topFavoritesShop.shopFavorites)} shop favorites.</p>
+                        <p className="mt-2 text-sm text-muted">${dinhDangSoGon(topFavoritesShop.shopFavorites)} shop favorites.</p>
                     ` : html`<p className="text-sm text-muted">Favorite leader appears after competitor data loads.</p>`}
                 </div>
             </section>
@@ -470,9 +470,9 @@ export function CompetitorTrackingPage({ listings, isLoading, error, refetch, ti
             </section>
 
             ${isLoading ? html`
-                <${GridSkeleton} />
+                <${LuoiKhungTai} />
             ` : error ? html`
-                <${FallbackState}
+                <${TrangThaiDuPhong}
                     tone="error"
                     title="Competitor API returned an error"
                     description=${error}
@@ -482,7 +482,7 @@ export function CompetitorTrackingPage({ listings, isLoading, error, refetch, ti
             ` : listings.length ? html`
                 <section className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5 pb-8">
                     ${listings.map((listing) => html`
-                        <${CompetitorCard}
+                        <${TheDoiThu}
                             key=${listing.listingId}
                             listing=${listing}
                             timeframe=${timeframe}
@@ -491,7 +491,7 @@ export function CompetitorTrackingPage({ listings, isLoading, error, refetch, ti
                     `)}
                 </section>
             ` : html`
-                <${FallbackState}
+                <${TrangThaiDuPhong}
                     tone="empty"
                     title="No competitor shops found"
                     description="Widen the category or keyword filter to load competitor shops for tracking."
@@ -500,7 +500,7 @@ export function CompetitorTrackingPage({ listings, isLoading, error, refetch, ti
                 />
             `}
 
-            <${CompetitorModal} shop=${selectedShop} onClose=${() => setSelectedShop(null)} />
+            <${HopThoaiDoiThu} shop=${selectedShop} onClose=${() => setSelectedShop(null)} />
         </main>
     `;
 }

@@ -12,7 +12,7 @@ const toneStyles = {
     },
 };
 
-export function FallbackState({
+export function TrangThaiDuPhong({
     tone = "empty",
     title,
     description,

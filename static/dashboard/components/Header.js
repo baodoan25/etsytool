@@ -1,31 +1,31 @@
 import { CircleHelp, Flame, Search, SlidersHorizontal, Sparkles } from "lucide-react";
 import { html } from "../utils/html.js";
 
-const searchModes = [
+const cacCheDoTimKiem = [
     { value: "tag", label: "Tag" },
     { value: "keyword", label: "Keyword" },
     { value: "shop", label: "Shop ID/Name" },
 ];
 
-const createdTimeOptions = [
+const cacLuaChonThoiGianTao = [
     { value: "all", label: "Any time" },
     { value: "7", label: "< 7 days" },
     { value: "30", label: "< 30 days" },
 ];
 
-const timeframeOptions = [
+const cacLuaChonKhoangThoiGian = [
     { value: "1", label: "1 Day" },
     { value: "7", label: "7 Days" },
     { value: "30", label: "30 Days" },
 ];
 
-const sortOptions = [
+const cacLuaChonSapXep = [
     { value: "best-selling", label: "Best Selling" },
     { value: "newest", label: "Newest" },
     { value: "most-viewed", label: "Most Viewed" },
 ];
 
-function getSearchPlaceholder(searchMode) {
+function layGoiYOTimKiem(searchMode) {
     if (searchMode === "tag") {
         return "Try: fathers day, mug wrap, pantry labels";
     }
@@ -37,7 +37,7 @@ function getSearchPlaceholder(searchMode) {
     return "Search title, keyword, holiday, tag, shop...";
 }
 
-function getSearchHint(searchMode) {
+function layGoiYTimKiem(searchMode) {
     if (searchMode === "tag") {
         return "Tag query is sent to the backend API and should match listing tags in your tracked dataset.";
     }
@@ -49,7 +49,7 @@ function getSearchHint(searchMode) {
     return "Keyword search is delegated to the backend so title and tag matching stay consistent with your tracked database.";
 }
 
-function FilterSelect({ label, value, onChange, options }) {
+function ChonBoLoc({ label, value, onChange, options }) {
     return html`
         <label className="min-w-[168px]">
             <span className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">${label}</span>
@@ -66,7 +66,7 @@ function FilterSelect({ label, value, onChange, options }) {
     `;
 }
 
-function DateField({ value, onChange }) {
+function TruongNgay({ value, onChange }) {
     return html`
         <label>
             <span className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">Research Date</span>
@@ -80,8 +80,8 @@ function DateField({ value, onChange }) {
     `;
 }
 
-export function Header({
-    categories,
+export function DauTrang({
+    cacDanhMuc,
     filters,
     onFilterChange,
     resultCount,
@@ -132,7 +132,7 @@ export function Header({
                                 onChange=${(event) => onFilterChange("searchMode", event.target.value)}
                                 className="filter-select h-11 w-full rounded-2xl border border-border bg-canvas px-4 pr-8 text-sm font-medium text-ink focus:border-accent focus:ring-0"
                             >
-                                ${searchModes.map((mode) => html`
+                                ${cacCheDoTimKiem.map((mode) => html`
                                     <option key=${mode.value} value=${mode.value}>${mode.label}</option>
                                 `)}
                             </select>
@@ -146,12 +146,12 @@ export function Header({
                                     type="text"
                                     value=${filters.searchQuery}
                                     onChange=${(event) => onFilterChange("searchQuery", event.target.value)}
-                                    placeholder=${getSearchPlaceholder(filters.searchMode)}
+                                    placeholder=${layGoiYOTimKiem(filters.searchMode)}
                                     className="h-11 w-full rounded-2xl border border-border bg-canvas pl-11 pr-4 text-sm text-ink placeholder:text-slate-400 focus:border-accent focus:ring-0"
                                 />
                             </div>
                             <p className="mt-2 text-xs text-muted">
-                                ${getSearchHint(filters.searchMode)}
+                                ${layGoiYTimKiem(filters.searchMode)}
                             </p>
                         </label>
                     </div>
@@ -164,34 +164,34 @@ export function Header({
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
-                        <${DateField}
+                        <${TruongNgay}
                             value=${filters.date}
                             onChange=${(event) => onFilterChange("date", event.target.value)}
                         />
-                        <${FilterSelect}
+                        <${ChonBoLoc}
                             label="Category"
                             value=${filters.category}
                             onChange=${(event) => onFilterChange("category", event.target.value)}
-                            options=${categories}
+                            options=${cacDanhMuc}
                         />
-                        <${FilterSelect}
+                        <${ChonBoLoc}
                             label="Created Time"
                             value=${filters.createdTime}
                             onChange=${(event) => onFilterChange("createdTime", event.target.value)}
-                            options=${createdTimeOptions}
+                            options=${cacLuaChonThoiGianTao}
                         />
-                        <${FilterSelect}
+                        <${ChonBoLoc}
                             label="Timeframe"
                             value=${filters.timeframe}
                             onChange=${(event) => onFilterChange("timeframe", event.target.value)}
-                            options=${timeframeOptions}
+                            options=${cacLuaChonKhoangThoiGian}
                         />
                         <div className="col-span-2">
-                            <${FilterSelect}
+                            <${ChonBoLoc}
                                 label="Sort By"
                                 value=${filters.sortBy}
                                 onChange=${(event) => onFilterChange("sortBy", event.target.value)}
-                                options=${sortOptions}
+                                options=${cacLuaChonSapXep}
                             />
                         </div>
                     </div>

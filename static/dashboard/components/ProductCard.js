@@ -1,24 +1,24 @@
 import { ArrowUpRight, BarChart3, CalendarDays, Heart, MapPin, MessageSquare, Package, Store } from "lucide-react";
 import {
-    formatCompactNumber,
-    formatNumber,
+    dinhDangSoGon,
+    dinhDangSo,
 } from "../utils/formatters.js";
 import { html } from "../utils/html.js";
 import { resolveSafeExternalUrl } from "../utils/urlResolvers.js";
 
-const shopMetrics = [
+const cacChiSoShop = [
     { key: "listingCount", label: "Listings", icon: Package },
     { key: "shopFavorites", label: "Favorites", icon: Heart },
     { key: "shopReviews", label: "Reviews", icon: MessageSquare },
 ];
 
-const salesMetrics = [
+const cacChiSoDoanhSo = [
     { key: "sales1Day", label: "1 Day" },
     { key: "sales7Day", label: "7 Days" },
     { key: "sales30Day", label: "30 Days" },
 ];
 
-export function ProductCard({ listing, timeframe, onSelect }) {
+export function TheSanPham({ listing, timeframe, onSelect }) {
     const shopLink = resolveSafeExternalUrl(listing.shopUrl, listing.shopName, listing.shopUrlVerified);
 
     return html`
@@ -50,7 +50,7 @@ export function ProductCard({ listing, timeframe, onSelect }) {
                             </span>
                             <span className="inline-flex items-center gap-1 text-blue-600">
                                 <${BarChart3} className="h-3.5 w-3.5" />
-                                ${formatCompactNumber(listing.totalShopSales)}
+                                ${dinhDangSoGon(listing.totalShopSales)}
                             </span>
                             ${listing.country ? html`
                                 <span className="inline-flex items-center gap-1">
@@ -65,14 +65,14 @@ export function ProductCard({ listing, timeframe, onSelect }) {
                 <div className="my-5 border-t border-border"></div>
 
                 <div className="grid grid-cols-3 gap-3 text-center">
-                    ${shopMetrics.map((metric) => {
+                    ${cacChiSoShop.map((metric) => {
                         const Icon = metric.icon;
 
                         return html`
                             <div key=${metric.key}>
                                 <div className="mx-auto mb-1 flex items-center justify-center gap-1 text-xl font-semibold text-ink">
                                     <${Icon} className="h-4 w-4 text-muted" />
-                                    ${formatCompactNumber(listing[metric.key])}
+                                    ${dinhDangSoGon(listing[metric.key])}
                                 </div>
                                 <div className="text-sm text-muted">${metric.label}</div>
                             </div>
@@ -83,9 +83,9 @@ export function ProductCard({ listing, timeframe, onSelect }) {
                 <div className="my-5 border-t border-border"></div>
 
                 <div className="grid grid-cols-3 gap-3 text-center">
-                    ${salesMetrics.map((metric) => html`
+                    ${cacChiSoDoanhSo.map((metric) => html`
                         <div key=${metric.key}>
-                            <div className="text-xl font-semibold text-sunrise">${formatCompactNumber(listing[metric.key])}</div>
+                            <div className="text-xl font-semibold text-sunrise">${dinhDangSoGon(listing[metric.key])}</div>
                             <div className="mt-1 text-sm text-muted">${metric.label}</div>
                         </div>
                     `)}
@@ -122,7 +122,7 @@ export function ProductCard({ listing, timeframe, onSelect }) {
                         Top shop by category
                     </span>
                     <span className="font-semibold text-sunrise">
-                        ${formatNumber(listing.estimatedSales)} selected-period sales
+                        ${dinhDangSo(listing.estimatedSales)} selected-period sales
                     </span>
                 </div>
             </div>

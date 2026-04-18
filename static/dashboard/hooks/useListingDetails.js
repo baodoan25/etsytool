@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { fetchListingDetails } from "../api/podResearchApi.js";
+import { taiChiTietListing } from "../api/podResearchApi.js";
 
-export function useListingDetails(listingSummary) {
+export function dungChiTietListing(listingSummary) {
     const [details, setDetails] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
     const [reloadKey, setReloadKey] = useState(0);
-    const requestIdRef = useRef(0);
+    const thamChieuMaYeuCau = useRef(0);
 
     useEffect(() => {
         if (!listingSummary?.listingId) {
@@ -16,17 +16,17 @@ export function useListingDetails(listingSummary) {
             return undefined;
         }
 
-        const abortController = new AbortController();
-        const nextRequestId = requestIdRef.current + 1;
-        requestIdRef.current = nextRequestId;
+        const boHuyYeuCau = new AbortController();
+        const maYeuCauTiepTheo = thamChieuMaYeuCau.current + 1;
+        thamChieuMaYeuCau.current = maYeuCauTiepTheo;
 
         setIsLoading(true);
         setError("");
         setDetails(null);
 
-        fetchListingDetails(listingSummary.listingId, listingSummary, abortController.signal)
+        taiChiTietListing(listingSummary.listingId, listingSummary, boHuyYeuCau.signal)
             .then((responseDetails) => {
-                if (abortController.signal.aborted || requestIdRef.current !== nextRequestId) {
+                if (boHuyYeuCau.signal.aborted || thamChieuMaYeuCau.current !== maYeuCauTiepTheo) {
                     return;
                 }
 
@@ -34,7 +34,7 @@ export function useListingDetails(listingSummary) {
                 setError("");
             })
             .catch((fetchError) => {
-                if (abortController.signal.aborted || requestIdRef.current !== nextRequestId) {
+                if (boHuyYeuCau.signal.aborted || thamChieuMaYeuCau.current !== maYeuCauTiepTheo) {
                     return;
                 }
 
@@ -42,7 +42,7 @@ export function useListingDetails(listingSummary) {
                 setError(fetchError.message || "Unable to load listing details.");
             })
             .finally(() => {
-                if (abortController.signal.aborted || requestIdRef.current !== nextRequestId) {
+                if (boHuyYeuCau.signal.aborted || thamChieuMaYeuCau.current !== maYeuCauTiepTheo) {
                     return;
                 }
 
@@ -50,7 +50,7 @@ export function useListingDetails(listingSummary) {
             });
 
         return () => {
-            abortController.abort();
+            boHuyYeuCau.abort();
         };
     }, [listingSummary?.listingId, reloadKey]);
 

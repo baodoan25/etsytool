@@ -1,6 +1,6 @@
 import { html } from "../utils/html.js";
 
-function SkeletonMetric() {
+function ChiSoKhungTai() {
     return html`
         <div className="rounded-[20px] border border-border bg-white px-4 py-3">
             <div className="skeleton-block mb-3 h-3 w-20 rounded-full"></div>
@@ -9,7 +9,7 @@ function SkeletonMetric() {
     `;
 }
 
-export function GridSkeleton({ count = 6 }) {
+export function LuoiKhungTai({ count = 6 }) {
     return html`
         <section className="grid grid-cols-[repeat(auto-fill,minmax(340px,1fr))] gap-5 pb-8">
             ${Array.from({ length: count }, (_, index) => html`
@@ -26,10 +26,10 @@ export function GridSkeleton({ count = 6 }) {
                             </div>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
-                            <${SkeletonMetric} />
-                            <${SkeletonMetric} />
-                            <${SkeletonMetric} />
-                            <${SkeletonMetric} />
+                            <${ChiSoKhungTai} />
+                            <${ChiSoKhungTai} />
+                            <${ChiSoKhungTai} />
+                            <${ChiSoKhungTai} />
                         </div>
                         <div className="mt-4 rounded-[22px] border border-border bg-accentSoft/55 px-4 py-4">
                             <div className="skeleton-block h-3 w-28 rounded-full"></div>

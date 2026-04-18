@@ -1,4 +1,4 @@
-export { ListingModal as ProductModal } from "./ListingModal.js";
+export { HopThoaiListing as HopThoaiSanPham } from "./ListingModal.js";
 /*
 import { useEffect } from "react";
 import { ArrowUpRight, BarChart3, Eye, Heart, Store, Tags, X } from "lucide-react";
@@ -53,8 +53,8 @@ function TagBadge({ tag, index }) {
 }
 */
 
-export function ProductModal({ listing, timeframe, onClose }) {
-    const { details, isLoading, error, refetch } = useListingDetails(listing);
+export function HopThoaiSanPham({ listing, timeframe, onClose }) {
+    const { details, isLoading, error, refetch } = dungChiTietListing(listing);
 
     useEffect(() => {
         if (!listing) {
@@ -97,10 +97,10 @@ export function ProductModal({ listing, timeframe, onClose }) {
                 </button>
 
                 ${isLoading ? html`
-                    <${ModalSkeleton} />
+                    <${KhungTaiHopThoai} />
                 ` : error ? html`
                     <div className="w-[min(920px,calc(100vw-120px))]">
-                        <${FallbackState}
+                        <${TrangThaiDuPhong}
                             tone="error"
                             title="Listing detail API is not responding"
                             description=${error}
@@ -123,12 +123,12 @@ export function ProductModal({ listing, timeframe, onClose }) {
                                         Listing Detail
                                     </span>
                                     <span className="rounded-full bg-accentSoft px-3 py-1 text-xs font-semibold text-accent">
-                                        ${getTimeframeLabel(timeframe)}
+                                        ${layNhanKhoangThoiGian(timeframe)}
                                     </span>
                                 </div>
 
                                 <h2 id="product-modal-title" className="font-display text-[2rem] leading-tight text-ink">
-                                    ${details.title || buildListingDisplayTitle(listing.listingId)}
+                                    ${details.title || taoTieuDeHienThiListing(listing.listingId)}
                                 </h2>
 
                                 <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted">
@@ -145,7 +145,7 @@ export function ProductModal({ listing, timeframe, onClose }) {
                                 </div>
 
                                 <div className="mt-6 grid grid-cols-2 gap-3">
-                                    ${metricCards.map((metric) => {
+                                    ${cacTheChiSo.map((metric) => {
                                         const Icon = metric.icon;
 
                                         return html`
@@ -194,7 +194,7 @@ export function ProductModal({ listing, timeframe, onClose }) {
 
                             <div className="grid grid-cols-2 gap-3">
                                 ${details.tags.map((tag, index) => html`
-                                    <${TagBadge} key=${tag.id} tag=${tag} index=${index} />
+                                    <${NhanThe} key=${tag.id} tag=${tag} index=${index} />
                                 `)}
                             </div>
                         </section>
