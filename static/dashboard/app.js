@@ -1,4 +1,4 @@
-export { GocUngDung as UngDung } from "./AppRoot.js";
+export { GocUngDung as App, GocUngDung as UngDung } from "./AppRoot.js";
 /*
 import { useDeferredValue, useState } from "react";
 import { ArrowUpRight, BarChart3, Heart, Store } from "lucide-react";

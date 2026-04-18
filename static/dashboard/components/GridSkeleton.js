@@ -41,3 +41,5 @@ export function LuoiKhungTai({ count = 6 }) {
         </section>
     `;
 }
+
+export { LuoiKhungTai as GridSkeleton };

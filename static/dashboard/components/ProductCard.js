@@ -129,3 +129,5 @@ export function TheSanPham({ listing, timeframe, onSelect }) {
         </article>
     `;
 }
+
+export { TheSanPham as ProductCard };

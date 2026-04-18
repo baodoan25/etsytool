@@ -47,3 +47,5 @@ export function KhungTaiHopThoai() {
         </div>
     `;
 }
+
+export { KhungTaiHopThoai as ModalSkeleton };

@@ -215,3 +215,5 @@ export function GocUngDung() {
         </div>
     `;
 }
+
+export { GocUngDung as AppRoot };

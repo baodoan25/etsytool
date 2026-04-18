@@ -46,3 +46,5 @@ export function TrangThaiDuPhong({
         </div>
     `;
 }
+
+export { TrangThaiDuPhong as FallbackState };

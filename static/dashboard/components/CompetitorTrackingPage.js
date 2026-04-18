@@ -504,3 +504,5 @@ export function TrangTheoDoiDoiThu({ listings, isLoading, error, refetch, timefr
         </main>
     `;
 }
+
+export { TrangTheoDoiDoiThu as CompetitorTrackingPage };

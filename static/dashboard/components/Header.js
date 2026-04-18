@@ -235,3 +235,5 @@ export function DauTrang({
         </header>
     `;
 }
+
+export { DauTrang as Header };

@@ -141,3 +141,5 @@ export function TrangLichSuKienEtsy({ onKeywordSelect }) {
         </main>
     `;
 }
+
+export { TrangLichSuKienEtsy as EtsyEventCalendarPage };

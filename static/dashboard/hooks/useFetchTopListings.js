@@ -64,3 +64,5 @@ export function dungTaiListingHangDau(filters) {
         refetch: () => setReloadKey((current) => current + 1),
     };
 }
+
+export { dungTaiListingHangDau as useFetchTopListings };

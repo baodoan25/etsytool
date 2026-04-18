@@ -61,3 +61,5 @@ export function dungChiTietListing(listingSummary) {
         refetch: () => setReloadKey((current) => current + 1),
     };
 }
+
+export { dungChiTietListing as useListingDetails };

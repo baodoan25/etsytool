@@ -252,3 +252,5 @@ export const cacThangSuKienUsa = [
         ],
     },
 ];
+
+export { cacThangSuKienUsa as usaEventMonths };

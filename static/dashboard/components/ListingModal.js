@@ -237,3 +237,5 @@ export function HopThoaiListing({ listing, timeframe, onClose }) {
         </div>
     `;
 }
+
+export { HopThoaiListing as ListingModal };

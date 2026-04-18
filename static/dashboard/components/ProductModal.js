@@ -1,4 +1,4 @@
-export { HopThoaiListing as HopThoaiSanPham } from "./ListingModal.js";
+export { HopThoaiListing as HopThoaiSanPham, HopThoaiListing as ProductModal } from "./ListingModal.js";
 /*
 import { useEffect } from "react";
 import { ArrowUpRight, BarChart3, Eye, Heart, Store, Tags, X } from "lucide-react";
@@ -53,6 +53,7 @@ function TagBadge({ tag, index }) {
 }
 */
 
+/*
 export function HopThoaiSanPham({ listing, timeframe, onClose }) {
     const { details, isLoading, error, refetch } = dungChiTietListing(listing);
 
@@ -205,3 +206,4 @@ export function HopThoaiSanPham({ listing, timeframe, onClose }) {
     `;
 }
 
+*/

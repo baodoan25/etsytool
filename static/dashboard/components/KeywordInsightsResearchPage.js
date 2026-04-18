@@ -326,3 +326,5 @@ export function TrangNghienCuuThongTinTuKhoa({ initialQuery = "" }) {
         </main>
     `;
 }
+
+export { TrangNghienCuuThongTinTuKhoa as KeywordInsightsResearchPage };

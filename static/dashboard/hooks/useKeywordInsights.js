@@ -54,3 +54,5 @@ export function dungThongTinTuKhoa(filters) {
         refetch: () => setReloadKey((current) => current + 1),
     };
 }
+
+export { dungThongTinTuKhoa as useKeywordInsights };

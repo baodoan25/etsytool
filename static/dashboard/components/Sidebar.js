@@ -76,3 +76,5 @@ export function ThanhBen({ activeItem, onSelect }) {
         </aside>
     `;
 }
+
+export { ThanhBen as Sidebar };

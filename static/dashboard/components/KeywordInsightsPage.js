@@ -248,3 +248,5 @@ export function TrangThongTinTuKhoa({ initialQuery = "" }) {
         </main>
     `;
 }
+
+export { TrangThongTinTuKhoa as KeywordInsightsPage };
