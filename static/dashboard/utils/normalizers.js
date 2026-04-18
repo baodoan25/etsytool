@@ -45,7 +45,7 @@
 
 export function thanhSo(value) {
     const giaTriDaPhanTich = Number(value);
-    return Number.isFinite(giaTriDaPhanTich) ? parsedValue : 0;
+    return Number.isFinite(giaTriDaPhanTich) ? giaTriDaPhanTich : 0;
 }
 
 export function thanhBoolean(value) {
