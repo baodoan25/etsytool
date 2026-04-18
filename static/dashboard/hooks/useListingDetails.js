@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { taiChiTietListing } from "../api/podResearchApi.js";
+import { taiChiTietListing } from "../api/podResearchApi.js?v=20260418-normalizer-fix";
 
 export function dungChiTietListing(listingSummary) {
     const [details, setDetails] = useState(null);

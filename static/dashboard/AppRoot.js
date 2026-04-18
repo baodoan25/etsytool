@@ -1,7 +1,7 @@
 import { useDeferredValue, useState } from "react";
 import { ArrowUpRight, BarChart3, Heart, Store } from "lucide-react";
 import { ThanhBen } from "./components/Sidebar.js";
-import { DauTrang } from "./components/Header.js?v=20260418-header-map";
+import { DauTrang } from "./components/Header.js?v=20260418-normalizer-fix";
 import { TrangNghienCuuThongTinTuKhoa } from "./components/KeywordInsightsResearchPage.js";
 import { TrangLichSuKienEtsy } from "./components/EtsyEventCalendarPage.js";
 import { TrangTheoDoiDoiThu } from "./components/CompetitorTrackingPage.js";
@@ -9,7 +9,7 @@ import { TheSanPham } from "./components/ProductCard.js";
 import { HopThoaiListing } from "./components/ListingModal.js";
 import { TrangThaiDuPhong } from "./components/FallbackState.js";
 import { LuoiKhungTai } from "./components/GridSkeleton.js";
-import { dungTaiListingHangDau } from "./hooks/useFetchTopListings.js";
+import { dungTaiListingHangDau } from "./hooks/useFetchTopListings.js?v=20260418-normalizer-fix";
 import { dinhDangSoGon, dinhDangSo } from "./utils/formatters.js";
 import { html } from "./utils/html.js";
 

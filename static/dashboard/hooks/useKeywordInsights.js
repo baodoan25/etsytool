@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { taiThongTinTuKhoa } from "../api/podResearchApi.js";
+import { taiThongTinTuKhoa } from "../api/podResearchApi.js?v=20260418-normalizer-fix";
 
 export function dungThongTinTuKhoa(filters) {
     const [items, setItems] = useState([]);

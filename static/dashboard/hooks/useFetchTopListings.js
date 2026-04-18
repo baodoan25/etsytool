@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { taiListingHangDau } from "../api/podResearchApi.js";
+import { taiListingHangDau } from "../api/podResearchApi.js?v=20260418-normalizer-fix";
 
 export function dungTaiListingHangDau(filters) {
     const [items, setItems] = useState([]);

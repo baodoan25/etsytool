@@ -1,7 +1,7 @@
 import {
     chuanHoaChiTietListing,
     chuanHoaTapListingHangDau,
-} from "../utils/normalizers.js";
+} from "../utils/normalizers.js?v=20260418-normalizer-fix";
 
 const CAU_HINH_MAC_DINH = {
     baseUrl: window.__POD_RESEARCH_API_BASE_URL__ || "/api/pod-research",
