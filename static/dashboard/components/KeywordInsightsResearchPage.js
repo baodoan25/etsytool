@@ -51,7 +51,23 @@ function TrendValue({ value }) {
     `;
 }
 
+function MetricNumber({ item, field }) {
+    if (item.isAiSuggestion) {
+        return html`<span className="text-sm font-semibold text-muted">AI idea</span>`;
+    }
+
+    return formatNumber(item[field]);
+}
+
 function RatioBadges({ item }) {
+    if (item.isAiSuggestion) {
+        return html`
+            <div className="mt-2 flex flex-wrap gap-2">
+                <span className="rounded-full bg-accentSoft px-3 py-1 text-sm text-accent">Needs live metrics</span>
+            </div>
+        `;
+    }
+
     return html`
         <div className="mt-2 flex flex-wrap gap-2">
             <span className="rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700">
@@ -128,25 +144,32 @@ function KeywordRow({ item, onDetail }) {
         <tr className="border-b border-white bg-[#f1f1f1] last:border-b-0">
             <td className="px-6 py-8 align-middle">
                 <p className="text-lg font-semibold tracking-tight text-ink">${item.keyword}</p>
+                ${item.isAiSuggestion ? html`
+                    <p className="mt-1 text-xs uppercase tracking-[0.14em] text-accent">Gemini expanded keyword</p>
+                ` : null}
             </td>
             <td className="px-6 py-8 align-middle">
                 <div className="text-lg font-semibold text-ink">
-                    ${formatNumber(item.sales)}
-                    <${TrendValue} value=${item.growthPercent} />
+                    <${MetricNumber} item=${item} field="sales" />
+                    ${item.isAiSuggestion ? null : html`<${TrendValue} value=${item.growthPercent} />`}
                 </div>
-                <p className="mt-1 text-sm text-muted">Previous period: ${formatNumber(item.previousSales)} sales</p>
+                <p className="mt-1 text-sm text-muted">
+                    ${item.isAiSuggestion ? "Sales metrics are not available for AI-only suggestions." : `Previous period: ${formatNumber(item.previousSales)} sales`}
+                </p>
             </td>
             <td className="px-6 py-8 align-middle">
                 <span className="font-display text-xl text-sunrise">${formatNumber(item.score)}</span>
             </td>
             <td className="px-6 py-8 align-middle">
                 <div className="text-lg font-semibold text-ink">
-                    ${formatNumber(item.newListings)}
-                    <${TrendValue} value=${item.newListingsGrowthPercent} />
+                    <${MetricNumber} item=${item} field="newListings" />
+                    ${item.isAiSuggestion ? null : html`<${TrendValue} value=${item.newListingsGrowthPercent} />`}
                 </div>
             </td>
             <td className="px-6 py-8 align-middle">
-                <div className="text-lg font-semibold text-ink">${formatCompactNumber(item.totalListings)}</div>
+                <div className="text-lg font-semibold text-ink">
+                    ${item.isAiSuggestion ? "Pending" : formatCompactNumber(item.totalListings)}
+                </div>
                 <${RatioBadges} item=${item} />
             </td>
             <td className="px-6 py-8 align-middle">
@@ -175,7 +198,7 @@ export function KeywordInsightsResearchPage({ initialQuery = "" }) {
     });
     const intent = meta?.intent || {};
     const expandedKeywords = Array.isArray(intent.expandedKeywords)
-        ? intent.expandedKeywords.filter((keyword) => keyword && keyword !== intent.originalQuery).slice(0, 6)
+        ? intent.expandedKeywords.filter((keyword) => keyword && keyword !== intent.originalQuery).slice(0, 12)
         : [];
 
     useEffect(() => {

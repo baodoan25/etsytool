@@ -155,7 +155,7 @@ def _get_listing_source():
     return list(merged.values())
 
 
-def _matches_query(listing, search_mode, search_query):
+def _matches_query(listing, search_mode, search_query, expanded_queries=None):
     if not search_query:
         return True
 
@@ -175,7 +175,7 @@ def _matches_query(listing, search_mode, search_query):
             *listing.get("searchIntents", []),
         ]
 
-    return _matches_search_text(search_query, candidates)
+    return _matches_any_search_text(expanded_queries or [search_query], candidates)
 
 
 def _matches_created_time(listing, created_time):
@@ -264,6 +264,19 @@ def top_listings_view(request):
     created_time = request.GET.get("createdTime", "all")
     sort_by = request.GET.get("sortBy", "best-selling")
     potential_only = request.GET.get("potentialOnly", "false").lower() == "true"
+    intent = (
+        expand_keyword_query(search_query)
+        if search_query and search_mode != "shop"
+        else {
+            "originalQuery": search_query,
+            "intent": search_query,
+            "expandedKeywords": [search_query] if search_query else [],
+            "productAngles": [],
+            "holidayFits": [],
+            "source": "none",
+        }
+    )
+    expanded_queries = intent.get("expandedKeywords", [search_query])
 
     listings = _get_listing_source()
     filtered = [
@@ -271,7 +284,7 @@ def top_listings_view(request):
         for listing in listings
         if _matches_category(listing, category)
         and _matches_created_time(listing, created_time)
-        and _matches_query(listing, search_mode, search_query)
+        and _matches_query(listing, search_mode, search_query, expanded_queries)
         and _matches_potential(listing, timeframe, potential_only)
     ]
     ordered = _sort_listings(filtered, sort_by, timeframe)
@@ -285,9 +298,53 @@ def top_listings_view(request):
                 "searchMode": search_mode,
                 "searchQuery": search_query,
                 "count": len(ordered),
+                "intent": intent,
             },
         }
     )
+
+
+def _build_ai_keyword_suggestions(intent, existing_items):
+    existing_keywords = {
+        str(item.get("keyword") or "").strip().lower()
+        for item in existing_items
+    }
+    suggestions = []
+
+    for index, keyword in enumerate(intent.get("expandedKeywords", []), start=1):
+        normalized_keyword = str(keyword or "").strip().lower()
+
+        if not normalized_keyword or normalized_keyword in existing_keywords:
+            continue
+
+        existing_keywords.add(normalized_keyword)
+        suggestions.append(
+            {
+                "keyword": normalized_keyword,
+                "sales": 0,
+                "previousSales": 0,
+                "growthPercent": 0,
+                "score": max(1, 60 - index),
+                "newListings": 0,
+                "newListingsGrowthPercent": 0,
+                "totalListings": 0,
+                "physicalPercent": 50,
+                "digitalPercent": 50,
+                "holiday": ", ".join(intent.get("holidayFits", [])[:2]) or "AI keyword idea",
+                "holidayDate": "",
+                "holidayFit": "AI",
+                "holidayReason": "Gemini keyword expansion only. Connect live Etsy metrics to rank this idea by sales and competition.",
+                "intentTags": [
+                    intent.get("intent", ""),
+                    *intent.get("productAngles", []),
+                    *intent.get("holidayFits", []),
+                ],
+                "source": intent.get("source", "ai"),
+                "isAiSuggestion": True,
+            }
+        )
+
+    return suggestions
 
 
 @require_GET
@@ -338,6 +395,7 @@ def keyword_insights_view(request):
                 ],
             )
         ]
+        items = [*items, *_build_ai_keyword_suggestions(intent, items)]
 
     if sort_by == "score":
         items = sorted(items, key=lambda item: item["score"], reverse=True)

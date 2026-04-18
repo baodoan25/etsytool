@@ -8,6 +8,7 @@ from django.conf import settings
 
 
 STOP_WORDS = {"a", "an", "and", "day", "for", "gift", "of", "the", "to", "with"}
+DEFAULT_MAX_EXPANDED_KEYWORDS = 32
 
 LOCAL_INTENT_MAP = {
     "mother": {
@@ -166,6 +167,7 @@ def _write_cache(cache):
 
 def _normalize_result(query, result, source):
     expanded = []
+    max_keywords = getattr(settings, "GEMINI_MAX_EXPANDED_KEYWORDS", DEFAULT_MAX_EXPANDED_KEYWORDS)
 
     for value in [query, *result.get("expandedKeywords", [])]:
         normalized = str(value or "").strip().lower()
@@ -176,11 +178,50 @@ def _normalize_result(query, result, source):
     return {
         "originalQuery": query,
         "intent": str(result.get("intent") or query or "General Etsy search").strip(),
-        "expandedKeywords": expanded[:16],
+        "expandedKeywords": expanded[:max_keywords],
         "productAngles": [str(item).strip() for item in result.get("productAngles", []) if str(item).strip()][:8],
         "holidayFits": [str(item).strip() for item in result.get("holidayFits", []) if str(item).strip()][:6],
         "source": source,
     }
+
+
+def _fallback_keyword_ideas(query):
+    base = str(query or "").strip().lower()
+
+    if not base:
+        return []
+
+    modifiers = [
+        "",
+        "gift",
+        "personalized",
+        "custom",
+        "funny",
+        "cute",
+        "vintage",
+        "shirt",
+        "sweatshirt",
+        "hat",
+        "mug",
+        "tumbler",
+        "sticker",
+        "svg",
+        "png",
+        "sublimation",
+        "printable",
+        "template",
+        "digital download",
+        "bundle",
+    ]
+    ideas = []
+
+    for modifier in modifiers:
+        keyword = f"{base} {modifier}".strip()
+
+        if keyword not in ideas:
+            ideas.append(keyword)
+
+    return ideas
 
 
 def _local_expand(query):
@@ -196,7 +237,7 @@ def _local_expand(query):
             query,
             {
                 "intent": query or "General Etsy search",
-                "expandedKeywords": [query],
+                "expandedKeywords": _fallback_keyword_ideas(query),
                 "productAngles": [],
                 "holidayFits": [],
             },
@@ -236,9 +277,11 @@ def _call_gemini(query):
         f"{model}:generateContent?key={api_key}"
     )
     prompt = (
-        "Return only compact JSON for an Etsy seller keyword search. "
+        "Return only compact JSON for an Etsy seller keyword research search. "
         "Schema: intent string, expandedKeywords array, productAngles array, holidayFits array. "
-        "Expand misspellings and buyer intent, but do not invent sales metrics. "
+        "Generate 24-32 Etsy buyer keywords across physical products, POD products, digital downloads, "
+        "templates, SVG/PNG, gifts, personalization, seasonal angles, and common misspellings when useful. "
+        "Do not invent sales metrics, ranking claims, prices, or URLs. "
         f"Query: {query}"
     )
     payload = {
