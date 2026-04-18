@@ -51,6 +51,13 @@ function layGoiYTimKiem(searchMode) {
 
 function ChonBoLoc({ label, value, onChange, options }) {
     const cacLuaChon = Array.isArray(options) ? options : [];
+    const cacOption = [];
+
+    for (const option of cacLuaChon) {
+        cacOption.push(html`
+            <option key=${option.value} value=${option.value}>${option.label}</option>
+        `);
+    }
 
     return html`
         <label className="min-w-[168px]">
@@ -60,9 +67,7 @@ function ChonBoLoc({ label, value, onChange, options }) {
                 onChange=${onChange}
                 className="filter-select h-11 w-full rounded-2xl border border-border bg-white/90 px-4 pr-8 text-sm font-medium text-ink shadow-sm transition focus:border-accent focus:ring-0"
             >
-                ${cacLuaChon.map((option) => html`
-                    <option key=${option.value} value=${option.value}>${option.label}</option>
-                `)}
+                ${cacOption}
             </select>
         </label>
     `;
@@ -98,6 +103,13 @@ export function DauTrang({
         : Array.isArray(categories)
             ? categories
             : [];
+    const cacOptionCheDoTimKiem = [];
+
+    for (const mode of cacCheDoTimKiem) {
+        cacOptionCheDoTimKiem.push(html`
+            <option key=${mode.value} value=${mode.value}>${mode.label}</option>
+        `);
+    }
 
     return html`
         <header className="surface-panel mb-5 rounded-[30px] p-5">
@@ -141,9 +153,7 @@ export function DauTrang({
                                 onChange=${(event) => onFilterChange("searchMode", event.target.value)}
                                 className="filter-select h-11 w-full rounded-2xl border border-border bg-canvas px-4 pr-8 text-sm font-medium text-ink focus:border-accent focus:ring-0"
                             >
-                                ${cacCheDoTimKiem.map((mode) => html`
-                                    <option key=${mode.value} value=${mode.value}>${mode.label}</option>
-                                `)}
+                                ${cacOptionCheDoTimKiem}
                             </select>
                         </label>
 

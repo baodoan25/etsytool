@@ -1,7 +1,7 @@
 import { useDeferredValue, useState } from "react";
 import { ArrowUpRight, BarChart3, Heart, Store } from "lucide-react";
 import { ThanhBen } from "./components/Sidebar.js";
-import { DauTrang } from "./components/Header.js";
+import { DauTrang } from "./components/Header.js?v=20260418-header-map";
 import { TrangNghienCuuThongTinTuKhoa } from "./components/KeywordInsightsResearchPage.js";
 import { TrangLichSuKienEtsy } from "./components/EtsyEventCalendarPage.js";
 import { TrangTheoDoiDoiThu } from "./components/CompetitorTrackingPage.js";
